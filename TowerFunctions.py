@@ -6,7 +6,8 @@ def hit(tower, target):
 
 def slow(tower,target):
     target.speed = 0.8
-    chooseTargetWithoutSpeedModification(tower)
+    #chooseTargetWithoutSpeedModification(tower)
+    #print target.speed * target.maxSpeed;
 
 def poison(tower,target):
     target.poison = 10
@@ -19,7 +20,7 @@ def chooseTargetWithoutSpeedModification(tower):
         for m in monsters:
             if (distanceEntity(tower, m) < tower.range and m.speed >= 1):
                 tower.target = m
-                break;
+                return;
 
 dicTowers = {}
 dicTowers["Hit"] = {"ChooseMethod" : None , "Cost" : 10,

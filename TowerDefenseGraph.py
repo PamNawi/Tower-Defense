@@ -20,7 +20,7 @@ class TowerDefenseGraph(GraphFromMap):
         self.verticeWeight[node] += weight
 
     def addDeath(self,node):
-        self.verticeDeaths[node] += 1
+        self.verticeDeaths[node] += 100
 
     def nawiDistance(self, start, goal):
         d = self.manhattanDistance(start, goal)
