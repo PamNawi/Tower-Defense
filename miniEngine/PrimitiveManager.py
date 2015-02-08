@@ -47,14 +47,14 @@ class Ellipse(Primitive):
 class Line(Primitive):
     def __init__(self):
         Primitive.__init__(self)
-        self.starPoint = (0,0)
-        self.endPoint = (10,10)
+        self.startPoint = (0,0)
+        self.endPoint = (100,100)
 
 class Lines(Primitive):
     def __init__(self):
         Primitive.__init__(self)
         self.closed = False
-        self.vertices  = ((0,0),(10,0))
+        self.vertices  = ((0,0),(100,100))
 
 class PrimitiveManager():
     def __init__(self):
@@ -74,25 +74,25 @@ class PrimitiveManager():
                self.primitives["Rect"][tag] = [primitive]
 
         elif isinstance(primitive,Polygon):
-            if(self.primitives["Polygon"][tag].has_key(tag)):
+            if(self.primitives["Polygon"].has_key(tag)):
                 self.primitives["Polygon"][tag] += [primitive]
             else:
                 self.primitives["Polygon"][tag] = [primitive]
 
         elif isinstance(primitive,Circle):
-            if(self.primitives["Circle"][tag].has_key(tag)):
+            if(self.primitives["Circle"].has_key(tag)):
                 self.primitives["Circle"][tag] += [primitive]
             else:
                 self.primitives["Circle"][tag] = [primitive]
 
         elif isinstance(primitive,Ellipse):
-            if(self.primitives["Ellipse"][tag].has_key(tag)):
+            if(self.primitives["Ellipse"].has_key(tag)):
                 self.primitives["Ellipse"][tag] += [primitive]
             else:
                 self.primitives["Ellipse"][tag] = [primitive]
 
         elif isinstance(primitive,Line):
-            if(self.primitives["Line"][tag].has_key(tag)):
+            if(self.primitives["Line"].has_key(tag)):
                 self.primitives["Line"][tag] += [primitive]
             else:
                 self.primitives["Line"][tag] = [primitive]

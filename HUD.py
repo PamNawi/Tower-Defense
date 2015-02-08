@@ -7,6 +7,8 @@ from Load import *
 
 class HUD:
     def __init__(self):
+        self.texts = {}
+        self.tabBars = {}
         self.loadEntitys()
 
     def loadEntitys(self):
@@ -15,26 +17,6 @@ class HUD:
         mE.mEntityManager.addEntity(self.mouseEntity, "Mouse")
         mE.mAnimationManager.setEntityAnimation(self.mouseEntity, "Mouse")
         self.mouseEntity.setRadiusBoundingCircle(1)        
-
-        '''t = TabBar()
-        t.setMinDesloc(800,80)
-        t.setMaxDesloc(800-180,80)
-        mE.mEntityManager.addEntity(t,"TabBar")
-        mE.mAnimationManager.setEntityAnimation(t, "BarTab")
-        
-        #b = TabBar()
-        #b.setMinDesloc(200,520)
-        b.setMaxDesloc(200,520)
-        mE.mEntityManager.addEntity(b,"BottomBar")
-        mE.mAnimationManager.setEntityAnimation(b,"BottomBar")
-        
-        e = createEntity(None)
-        e.setPosition(800,0)
-        t.addEntity(e)
-        
-        #self.addButton(t.appear,None, Vec2d(100,100),"Button")
-        #self.addButton(t.desappear, None, Vec2d(300,100), "Button")'''
-        pass
 
     def addButton(self, bFunction, bParams, bPosition, bTagAnimation):
         global mE
@@ -46,15 +28,34 @@ class HUD:
         b.function = bFunction
         b.params = bParams
 
+    def addTabBar(self, tabBar, tag):
+        global mE
+        self.tabBars[tag] = tabBar
+        mE.mEntityManager.addEntity(tabBar, tag +"TabBar")
+        mE.mAnimationManager.setEntityAnimation(tabBar,tag)
+
+    def addEntityToTabBar(self, entity, tagTabBar):
+        self.tabBars[tag].addEntity(entity)
         
+         
     def update(self):
         global mE
         self.mouseEntity.setPosition(mE.mouse.getPosition())
 
+        #Test for buttons
         lButtons = mE.mEntityManager.collision("Mouse","Button")
-
         if(lButtons):
             lButtons[0][1].startFunction()
+
+        #Update all texts
+        for t in self.texts:
+            self.texts[t][0].content = str(mE.mGlobalVariables[self.texts[t][1]])
+
+    def addText(self, text, variableTag, fontTag, tag):
+        mE.mTextManager.addText(text, tag)
+        mE.mTextManager.setTextFont(tag, fontTag)
+        self.texts[tag] = (text,variableTag)
+        
 
 def createEntity(params):
     e = Entity()

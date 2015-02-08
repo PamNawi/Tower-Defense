@@ -6,19 +6,22 @@ from Tiles import *
 from Animations import *
 from HUD import*
 from GameManager import *
+from StageSelection import *
 
 class Game:
     def __init__(self):
-        self.mGameManager = GameManager()
         global graph
         self.end = False
+        self.mStageSelection = StageSelection()
 
     def startGame(self):
         global PortalGraph
         mE.pushState()
-        
-        self.mGameManager.load()
-        self.mGameManager.gameLoop()
+
+        self.mStageSelection.load()
+        self.mStageSelection.update()
+        #self.mGameManager.load()
+        #self.mGameManager.gameLoop()
 
         mE.popState()
 

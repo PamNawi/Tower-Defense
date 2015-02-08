@@ -130,11 +130,17 @@ class Renderer:
 
         for ll in llLine:
             for l in ll:
-                pygame.draw.line(self.screen, l.color, l.startPoint, l.endPoint)
+                try:
+                    pygame.draw.line(self.screen, l.color, l.startPoint, l.endPoint)
+                except:
+                    pass
 
         for ll in llines:
             for l in ll:
-                pygame.draw.lines(self.screen, l.color, l.closed, l.vertices)    
+                try:
+                    pygame.draw.lines(self.screen, l.color, l.closed, l.vertices)
+                except:
+                    pass
                 
 class MiniEngine:
     def __init__(self, width = 1024, height = 768, nParticles = 1000):

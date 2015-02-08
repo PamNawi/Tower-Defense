@@ -53,17 +53,6 @@ def isOnCollision(e1, e2):
         return True
     return False
 
-class Surface:
-    def __init__(self, image = "", nFrames = 0):
-        if(image == ""):
-            return
-        self.surface = pygame.image.load(image)
-        self.frame = 0
-        self.nFrames = nFrames
-
-    def getFrame(self):
-        return self.surface
-
 class Animation:
     def __init__(self, lImages, speed):
         self.lImages = []

@@ -26,17 +26,17 @@ class EntityManager:
         self.layerOrder = []
 
     def addEntity(self, entity, tag , layer = None):
-        if(not self.entitys.has_key(tag)):
+        try:
+            self.entitys[tag] += [entity]
+        except KeyError:
             self.entitys[tag] = [entity]
             if(layer != None):
                 entity.layer = layer
                 #Add tag to a layer
-                if(not self.layers.has_key(layer)):
-                    self.layers[layer] = [tag]
-                else:
+                try:
                     self.layers[layer] += [tag]
-        else:
-            self.entitys[tag] += [entity]
+                except KeyError:
+                    self.layers[layer] = [tag]
 
     def removeEntity(self, entity, tag):
         self.entitys[tag].remove(entity)        

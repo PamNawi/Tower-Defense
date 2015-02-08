@@ -15,14 +15,17 @@ class GameManager:
         self.actualLevel = 0
         self.portalTiles = None
         self.cityTiles = None
+
         pass
 
     def load(self):
+        mE.setGlobalVariable("Money",100)
+        mE.mGlobalVariables["EndGame"] = False
+        
         self.loadAnimations()
         self.loadUI()
         self.loadMap()
 
-        mE.setGlobalVariable("Money",1000)
 
     def loadAnimations(self):
         #Especial Tiles Animations
@@ -55,7 +58,6 @@ class GameManager:
         mE.mAnimationManager.addAnimation(lImagesHPBarTowerM[0], lImagesHPBarTowerM[1], "TowerHealthBarMiddle")
 
             #HealthBar City
-
         mE.mEntityManager.defineLayerOrder(["Towers", "Monsters", "UI"])
         
     def setPortalCoordinates(self):
@@ -83,29 +85,32 @@ class GameManager:
 
     def loadUI(self):
         self.mHUD.loadEntitys()
-        
+
+        #Create the bottomBar
         bottomBar = Entity()
         mE.mEntityManager.addEntity(bottomBar,"BottomBar","UI")
         mE.mAnimationManager.setEntityAnimation(bottomBar, "BottomBar")
         bottomBar.setPosition(3 *64 ,8*64)
 
+        #Create the SlowButton
         slowButton = Button()
         slowButton.setCenterBoundingCircle(16,16)
         slowButton.setRadiusBoundingCircle(20)
         self.mHUD.addButton(self.showTowerStats, "Slow",Vec2d(3*64+29,8*64 +26),"SlowIcon")
-
+        #Create Damage Icon
         damageIcon = Button()
         damageIcon.setCenterBoundingCircle(16,16)
         damageIcon.setRadiusBoundingCircle(20)
         self.mHUD.addButton(self.showTowerStats, "Hit", Vec2d(3 *64 +73 ,8*64 + 26), "DamageIcon")
 
+        #Add TabBar for tower stats
         self.tabBar = TabBar()
         self.tabBar.setMinDesloc(800,80)
         self.tabBar.setMaxDesloc(800-180,80)
         self.tabBar.vecMaxSpeedDesloc  = 10
-        mE.mEntityManager.addEntity(self.tabBar,"TabBar")
-        mE.mAnimationManager.setEntityAnimation(self.tabBar,"TabBar")
+        self.mHUD.addTabBar(self.tabBar, "TabBar")
 
+        #Create the texts for tower stats
         font = pygame.font.Font(None,18)
         mE.mTextManager.addFont(font, "None14")
 
@@ -117,6 +122,10 @@ class GameManager:
         self.addTextTabBar((810,180),"TowerHP")
         self.addTextTabBar((810,210),"TowerCooldown")
         self.addTextTabBar((810,240),"TowerCost")
+
+        #Add texts to HUD
+        self.moneyUI = Text()
+        self.mHUD.addText(self.moneyUI, "Money", "None14", "MoneyUI")
                 
     def addTextTabBar(self, position, tag):
         t = Text()
@@ -158,23 +167,55 @@ class GameManager:
             mMap.mAnimationManager.addAnimation(lImagesPortal[0],lImagesPortal[1],"3")            
             mMap.mAnimationManager.addAnimation(lImagesVillage[0],lImagesVillage[1],"4")
 
-                      
+            #Trees  
             mMap.mAnimationManager.addAnimation(lImagesTree0[0],lImagesTree0[1],"t0")
             mMap.mAnimationManager.addAnimation(lImagesTree1[0],lImagesTree1[1],"t1")
             mMap.mAnimationManager.addAnimation(lImagesTree2[0],lImagesTree2[1],"t2")
             mMap.mAnimationManager.addAnimation(lImagesTree3[0],lImagesTree3[1],"t3")
+            mMap.mAnimationManager.addAnimation(lImagesTree4[0],lImagesTree4[1],"t4")
+            mMap.mAnimationManager.addAnimation(lImagesTree5[0],lImagesTree5[1],"t5")
+            mMap.mAnimationManager.addAnimation(lImagesTree6[0],lImagesTree6[1],"t6")
+            mMap.mAnimationManager.addAnimation(lImagesTree7[0],lImagesTree7[1],"t7")
+            mMap.mAnimationManager.addAnimation(lImagesTree8[0],lImagesTree8[1],"t8")
+			
+            mMap.mAnimationManager.addAnimation(lImagesTreeB0[0],lImagesTree0[1],"tb0")
+            mMap.mAnimationManager.addAnimation(lImagesTreeB1[0],lImagesTree1[1],"tb1")
+            mMap.mAnimationManager.addAnimation(lImagesTreeB2[0],lImagesTree2[1],"tb2")
+            mMap.mAnimationManager.addAnimation(lImagesTreeB3[0],lImagesTree3[1],"tb3")
+            mMap.mAnimationManager.addAnimation(lImagesTreeB4[0],lImagesTree4[1],"tb4")
+            mMap.mAnimationManager.addAnimation(lImagesTreeB5[0],lImagesTree5[1],"tb5")
+            mMap.mAnimationManager.addAnimation(lImagesTreeB6[0],lImagesTree6[1],"tb6")
+            mMap.mAnimationManager.addAnimation(lImagesTreeB7[0],lImagesTree7[1],"tb7")
+            mMap.mAnimationManager.addAnimation(lImagesTreeB8[0],lImagesTree8[1],"tb8")
+
 
             mMap.createFactoryTile(Tile, {}, "1", "1")
             mMap.createFactoryTile(Tile, {}, "0", "0")
             
             mMap.createFactoryTile(Portal, {"ParticleManager": mE.mParticleManager , "Waves": self.waves}, "3", "3")
-            mMap.createFactoryTile(Tile, {}, "4", "4")
+            mMap.createFactoryTile(City, {}, "4", "4")
 
             
             mMap.createFactoryTile(Tile, {}, "t0", "t0")
             mMap.createFactoryTile(Tile, {}, "t1", "t1")
             mMap.createFactoryTile(Tile, {}, "t2", "t2")
             mMap.createFactoryTile(Tile, {}, "t3", "t3")
+            mMap.createFactoryTile(Tile, {}, "t4", "t4")
+            mMap.createFactoryTile(Tile, {}, "t5", "t5")
+            mMap.createFactoryTile(Tile, {}, "t6", "t6")
+            mMap.createFactoryTile(Tile, {}, "t7", "t7")
+            mMap.createFactoryTile(Tile, {}, "t8", "t8")
+			
+			
+            mMap.createFactoryTile(Tile, {}, "tb0", "tb0")
+            mMap.createFactoryTile(Tile, {}, "tb1", "tb1")
+            mMap.createFactoryTile(Tile, {}, "tb2", "tb2")
+            mMap.createFactoryTile(Tile, {}, "tb3", "tb3")
+            mMap.createFactoryTile(Tile, {}, "tb4", "tb4")
+            mMap.createFactoryTile(Tile, {}, "tb5", "tb5")
+            mMap.createFactoryTile(Tile, {}, "tb6", "tb6")
+            mMap.createFactoryTile(Tile, {}, "tb7", "tb7")
+            mMap.createFactoryTile(Tile, {}, "tb8", "tb8")
             
             mMap.loadMap(m)
             mE.mMapManager.addMap(mMap, m)
@@ -211,7 +252,11 @@ class GameManager:
             if(mE.keyboard.isPressed(pygame.K_ESCAPE)):
                 self.tabBar.desappear()
 
-                
+            if(mE.mGlobalVariables["EndGame"]):
+                print "Game Over"
+                break
+
+
             self.mHUD.update()
             mE.render()
 
@@ -219,28 +264,37 @@ class GameManager:
     def createTower(self,tag,position = Vec2d(0,0)):
         global mE
         global dicTowers
-        
-        t = Tower()
-        mE.mAnimationManager.setEntityAnimation(t, tag+"Tower")
-        mE.mEntityManager.addEntity(t,"Tower", "Towers")
-        t.tag = "Tower"
-        t.setPosition(position)
-        t.setCenterBoundingCircle(32,32)
-        t.setRadiusBoundingCircle(32)
 
-        t.towerEffect   = dicTowers[tag]["Effect"]
-        t.hp.maxHealth  = dicTowers[tag]["HP"]
-        t.hp.health     = dicTowers[tag]["HP"]
-        t.slow          = dicTowers[tag]["Slow"]
-        t.poison        = dicTowers[tag]["PoisonDamage"]
-        t.damage        = dicTowers[tag]["HitDamage"]
-        t.cooldownShoot = dicTowers[tag]["Cooldown"]
+        if(mE.mGlobalVariables["Money"] >= dicTowers[tag]["Cost"]):
+            #Update the UI
+            mE.mGlobalVariables["Money"] += -dicTowers[tag]["Cost"]
+            self.moneyUI.content = "Money: " + str(mE.mGlobalVariables["Money"])
 
-        graph = mE.mGlobalVariables["Graph"]
-        graph.addWeightNode(t.graphPosition,50)
-        self.recalculateRouteAllMonsters()
-        print mE.mEntityManager.getTagEntitys("Tower")
-        return t
+            #Create the tower
+            t = Tower()
+            mE.mAnimationManager.setEntityAnimation(t, tag+"Tower")
+            mE.mEntityManager.addEntity(t,"Tower", "Towers")
+            t.tag = "Tower"
+            t.setPosition(position)
+            t.setCenterBoundingCircle(32,32)
+            t.setRadiusBoundingCircle(32)
+
+            t.towerEffect   = dicTowers[tag]["Effect"]
+            t.hp.maxHealth  = dicTowers[tag]["HP"]
+            t.hp.health     = dicTowers[tag]["HP"]
+            t.slow          = dicTowers[tag]["Slow"]
+            t.poison        = dicTowers[tag]["PoisonDamage"]
+            t.damage        = dicTowers[tag]["HitDamage"]
+            t.cooldownShoot = dicTowers[tag]["Cooldown"]
+                    
+            if(dicTowers[tag]["ChooseMethod"] != None):
+                t.chooseTargetMethod = dicTowers[tag]["ChooseMethod"]
+
+            #Put on Graph
+            graph = mE.mGlobalVariables["Graph"]
+            graph.addWeightNode(t.graphPosition,50)
+            self.recalculateRouteAllMonsters()
+            return t
 
     def recalculateRouteAllMonsters(self):
         monsters = mE.mEntityManager.getTagEntitys("Monster")
