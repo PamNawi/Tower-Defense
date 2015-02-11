@@ -233,6 +233,7 @@ def chooseTarget(self):
         if (distanceEntity(self, m) < self.range):
             self.target = m
             break;
+<<<<<<< HEAD
       
 
 class City(Tile):
@@ -260,3 +261,6 @@ class City(Tile):
     def die(self):
         mE.mGlobalVariables["EndGame"] = True
     
+=======
+
+>>>>>>> origin/master

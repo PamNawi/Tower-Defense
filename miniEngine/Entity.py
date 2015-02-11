@@ -1,4 +1,5 @@
 from Vector2D import *
+from collisionBlock import *
 import pygame
 import time
 
@@ -11,6 +12,8 @@ class Entity:
         self.centerBoundingCircle = Vec2d(0,0)
         self.animations = {}
         self.layer = None
+
+        self.collisionList = None
 
     def update(self):
         pass
@@ -48,9 +51,12 @@ def distanceBoundingCircles(e1,e2):
     return d
 
 def isOnCollision(e1, e2):
-    d = distanceBoundingCircles(e1,e2)
-    if( d <= e1.rBoundingCircle + e2.rBoundingCircle):
-        return True
+    if(e1.collisionList == None):
+        d = distanceBoundingCircles(e1,e2)
+        if( d <= e1.rBoundingCircle + e2.rBoundingCircle):
+            return True
+    else:
+        return e1.collisionList.getCollisionList(e2.collisionList)
     return False
 
 class Animation:

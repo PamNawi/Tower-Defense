@@ -1,0 +1,19 @@
+import os
+import random
+import pygame
+from Vector2D import *
+class CollisionBlock:
+    def __init__(self):
+        self.rect = None
+
+    def setRect(self,  topCorner, bottomCorner):
+        self.rect = pygame.Rect(topCorner.x,topCorner.y,
+
+    def move(self, deslocX, deslocY):
+        pass
+
+    def setCenterPosition(self, x, y):
+        pass
+
+    def collision(self, other):
+        pass

@@ -31,8 +31,30 @@ lImagesVillage  = ([".//Resources//city.png"],1)
 
 #Obstacles
 lImagesMountain = ([".//Resources//mountain.png"],1)
+<<<<<<< HEAD
 lImagesTree0 = ([".//Resources//Tree.png"],1)
 
+=======
+lImagesTree0 = ([".//Resources//T0.png"],1)
+lImagesTree1 = ([".//Resources//T1.png"],1)
+lImagesTree2 = ([".//Resources//T2.png"],1)
+lImagesTree3 = ([".//Resources//T3.png"],1)
+lImagesTree4 = ([".//Resources//T4.png"],1)
+lImagesTree5 = ([".//Resources//T5.png"],1)
+lImagesTree6 = ([".//Resources//T6.png"],1)
+lImagesTree7 = ([".//Resources//T7.png"],1)
+lImagesTree8 = ([".//Resources//T8.png"],1)
+
+lImagesTreeB0 = ([".//Resources//TB0.png"],1)
+lImagesTreeB1 = ([".//Resources//TB1.png"],1)
+lImagesTreeB2 = ([".//Resources//TB2.png"],1)
+lImagesTreeB3 = ([".//Resources//TB3.png"],1)
+lImagesTreeB4 = ([".//Resources//TB4.png"],1)
+lImagesTreeB5 = ([".//Resources//TB5.png"],1)
+lImagesTreeB6 = ([".//Resources//TB6.png"],1)
+lImagesTreeB7 = ([".//Resources//TB7.png"],1)
+lImagesTreeB8 = ([".//Resources//TB8.png"],1)
+>>>>>>> origin/master
 
 #Portal Particles
 lImagesPortalParticle = ([".//Resources//portalParticle.png",

@@ -21,6 +21,7 @@ def chooseTargetWithoutSpeedModification(tower):
             if (distanceEntity(tower, m) < tower.range and m.speed >= 1):
                 tower.target = m
                 return;
+<<<<<<< HEAD
 
 
 class Projectile(SteeringEntity):
@@ -44,6 +45,8 @@ class Projectile(SteeringEntity):
     def visualEffect(self):
         pass
 
+=======
+>>>>>>> origin/master
 
 dicTowers = {}
 dicTowers["Hit"] = {"ChooseMethod" : None , "Cost" : 10,
