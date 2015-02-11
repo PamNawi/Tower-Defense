@@ -13,17 +13,21 @@ class Game:
         global graph
         self.end = False
         self.mStageSelection = StageSelection()
+        self.mGameManager = GameManager()
 
     def startGame(self):
         global PortalGraph
         mE.pushState()
 
-        self.mStageSelection.load()
-        self.mStageSelection.update()
-        #self.mGameManager.load()
-        #self.mGameManager.gameLoop()
+        #self.mStageSelection.load()
+        #self.mStageSelection.update()
+        self.mGameManager.load()
+        self.mGameManager.gameLoop()
 
         mE.popState()
+
+    def printin(self):
+        print "Start Cooldown"
 
     def loadMenuAnimations(self):
         mE.mAnimationManager.addAnimation(lImagesBackground[0],lImagesBackground[1],"Background")  
@@ -48,7 +52,14 @@ class Game:
         self.mHud.addButton(self.startGame, None, Vec2d(140,170), "OptionsButton")
         self.mHud.addButton(self.endGame, None, Vec2d(180,240), "QuitButton")
 
+        mE.mAnimationManager.addAnimation(lImagesHPBarEnemyS[0], lImagesHPBarEnemyS[1], "CooldownBarStart")
+        mE.mAnimationManager.addAnimation(lImagesHPBarEnemyE[0], lImagesHPBarEnemyE[1], "CooldownBarEnd")
+        mE.mAnimationManager.addAnimation(lImagesHPBarEnemyM[0], lImagesHPBarEnemyM[1], "CooldownBarMiddle")
+
+        self.mHud.addCooldownButton(self.printin, None, Vec2d(500,500), "PlayButton")
+
         mE.mEntityManager.defineLayerOrder(["BG"])
+        
         while not self.end:
             mE.update()
             self.mHud.update()

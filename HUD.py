@@ -3,7 +3,7 @@ sys.path.insert(0, './/miniEngine/')
 from miniEngine import *
 
 from Load import *
-
+from HealthBar import *
 
 class HUD:
     def __init__(self):
@@ -27,6 +27,20 @@ class HUD:
         b.setPosition(bPosition)
         b.function = bFunction
         b.params = bParams
+
+
+    def addCooldownButton(self, bFunction, bParams, bPosition, bTagAnimation, cooldown = 1.0):
+        global mE
+        b = CooldownButton()
+        mE.mEntityManager.addEntity(b,"Button")
+        mE.mAnimationManager.setEntityAnimation(b, bTagAnimation)
+        
+        b.setRadiusBoundingCircle(5)
+        b.setPosition(bPosition)
+        b.function = bFunction
+        b.params = bParams
+
+        addBarToEntityManager(b.cooldownBar)
 
     def addTabBar(self, tabBar, tag):
         global mE
@@ -77,6 +91,24 @@ class Button(Entity):
         else:
             self.function()
 
+class CooldownButton(Button):
+    def __init__(self, cooldown = 1.0):
+        Button.__init__(self)
+        self.cooldownBar = CooldownBar(10, cooldown)
+        self.cooldownBar.setAnimation("CooldownBarStart","CooldownBarEnd", "CooldownBarMiddle")
+
+    def startFunction(self):
+        if(not self.cooldownBar.isActive()):
+            if(self.params != None):
+                self.function(self.params)
+            else:
+                self.function()
+
+            self.cooldownBar.activeCooldown()
+
+    def update(self):
+        Button.update(self)
+        self.cooldownBar.update()
 
 class TabBar(Entity):
     def __init__(self):

@@ -22,6 +22,29 @@ def chooseTargetWithoutSpeedModification(tower):
                 tower.target = m
                 return;
 
+
+class Projectile(SteeringEntity):
+    def __init__(self,target):
+        SteeringEntity.__init__(self)
+        self.ePursuit = target
+
+    def sumForces(self):
+        self.force = self.Pursuit(target)
+
+    def update(self):
+        SteeringEntity.update(self)
+        #if on collision with target
+        #make the effect
+        self.effect()
+        visualEffect()
+
+    def effect(self):
+        pass
+
+    def visualEffect(self):
+        pass
+
+
 dicTowers = {}
 dicTowers["Hit"] = {"ChooseMethod" : None , "Cost" : 10,
                     "Slow" : 1, "PoisonDamage": 0, "HitDamage": 0.1,

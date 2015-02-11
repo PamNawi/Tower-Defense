@@ -26,7 +26,7 @@ class Portal(Tile):
         if(self.nextParticle < 0):
             self.mParticleManager.createParticle(self.position,"spin",
                                                  {"CenterVelocity" : Vec2d(0,random.random() * -.6),
-                                                  "CenterPosition" : self.position+(32,32+13),
+                                                  "CenterPosition" : self.position+(32,32),
                                                   "Angle"          : random.random() * 360,
                                                   "Radius"         : random.random() * 10,
                                                   "Step"           : 0.05,
@@ -233,6 +233,7 @@ def chooseTarget(self):
         if (distanceEntity(self, m) < self.range):
             self.target = m
             break;
+      
 
 class City(Tile):
     def __init__(self,dicParams):

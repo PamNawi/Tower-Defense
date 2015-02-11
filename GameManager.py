@@ -26,7 +26,6 @@ class GameManager:
         self.loadUI()
         self.loadMap()
 
-
     def loadAnimations(self):
         #Especial Tiles Animations
         mE.mAnimationManager.addAnimation(lImagesPortal[0], lImagesPortal[1], "Portal")
@@ -93,12 +92,13 @@ class GameManager:
         bottomBar.setPosition(3 *64 ,8*64)
 
         #Create the SlowButton
-        slowButton = Button()
+        slowButton = CooldownButton()
         slowButton.setCenterBoundingCircle(16,16)
         slowButton.setRadiusBoundingCircle(20)
         self.mHUD.addButton(self.showTowerStats, "Slow",Vec2d(3*64+29,8*64 +26),"SlowIcon")
+        
         #Create Damage Icon
-        damageIcon = Button()
+        damageIcon = CooldownButton()
         damageIcon.setCenterBoundingCircle(16,16)
         damageIcon.setRadiusBoundingCircle(20)
         self.mHUD.addButton(self.showTowerStats, "Hit", Vec2d(3 *64 +73 ,8*64 + 26), "DamageIcon")
@@ -168,25 +168,7 @@ class GameManager:
             mMap.mAnimationManager.addAnimation(lImagesVillage[0],lImagesVillage[1],"4")
 
             #Trees  
-            mMap.mAnimationManager.addAnimation(lImagesTree0[0],lImagesTree0[1],"t0")
-            mMap.mAnimationManager.addAnimation(lImagesTree1[0],lImagesTree1[1],"t1")
-            mMap.mAnimationManager.addAnimation(lImagesTree2[0],lImagesTree2[1],"t2")
-            mMap.mAnimationManager.addAnimation(lImagesTree3[0],lImagesTree3[1],"t3")
-            mMap.mAnimationManager.addAnimation(lImagesTree4[0],lImagesTree4[1],"t4")
-            mMap.mAnimationManager.addAnimation(lImagesTree5[0],lImagesTree5[1],"t5")
-            mMap.mAnimationManager.addAnimation(lImagesTree6[0],lImagesTree6[1],"t6")
-            mMap.mAnimationManager.addAnimation(lImagesTree7[0],lImagesTree7[1],"t7")
-            mMap.mAnimationManager.addAnimation(lImagesTree8[0],lImagesTree8[1],"t8")
-			
-            mMap.mAnimationManager.addAnimation(lImagesTreeB0[0],lImagesTree0[1],"tb0")
-            mMap.mAnimationManager.addAnimation(lImagesTreeB1[0],lImagesTree1[1],"tb1")
-            mMap.mAnimationManager.addAnimation(lImagesTreeB2[0],lImagesTree2[1],"tb2")
-            mMap.mAnimationManager.addAnimation(lImagesTreeB3[0],lImagesTree3[1],"tb3")
-            mMap.mAnimationManager.addAnimation(lImagesTreeB4[0],lImagesTree4[1],"tb4")
-            mMap.mAnimationManager.addAnimation(lImagesTreeB5[0],lImagesTree5[1],"tb5")
-            mMap.mAnimationManager.addAnimation(lImagesTreeB6[0],lImagesTree6[1],"tb6")
-            mMap.mAnimationManager.addAnimation(lImagesTreeB7[0],lImagesTree7[1],"tb7")
-            mMap.mAnimationManager.addAnimation(lImagesTreeB8[0],lImagesTree8[1],"tb8")
+            mMap.mAnimationManager.addAnimation(lImagesTree0[0],lImagesTree0[1],"t")
 
 
             mMap.createFactoryTile(Tile, {}, "1", "1")
@@ -195,27 +177,7 @@ class GameManager:
             mMap.createFactoryTile(Portal, {"ParticleManager": mE.mParticleManager , "Waves": self.waves}, "3", "3")
             mMap.createFactoryTile(City, {}, "4", "4")
 
-            
-            mMap.createFactoryTile(Tile, {}, "t0", "t0")
-            mMap.createFactoryTile(Tile, {}, "t1", "t1")
-            mMap.createFactoryTile(Tile, {}, "t2", "t2")
-            mMap.createFactoryTile(Tile, {}, "t3", "t3")
-            mMap.createFactoryTile(Tile, {}, "t4", "t4")
-            mMap.createFactoryTile(Tile, {}, "t5", "t5")
-            mMap.createFactoryTile(Tile, {}, "t6", "t6")
-            mMap.createFactoryTile(Tile, {}, "t7", "t7")
-            mMap.createFactoryTile(Tile, {}, "t8", "t8")
-			
-			
-            mMap.createFactoryTile(Tile, {}, "tb0", "tb0")
-            mMap.createFactoryTile(Tile, {}, "tb1", "tb1")
-            mMap.createFactoryTile(Tile, {}, "tb2", "tb2")
-            mMap.createFactoryTile(Tile, {}, "tb3", "tb3")
-            mMap.createFactoryTile(Tile, {}, "tb4", "tb4")
-            mMap.createFactoryTile(Tile, {}, "tb5", "tb5")
-            mMap.createFactoryTile(Tile, {}, "tb6", "tb6")
-            mMap.createFactoryTile(Tile, {}, "tb7", "tb7")
-            mMap.createFactoryTile(Tile, {}, "tb8", "tb8")
+            mMap.createFactoryTile(Tile, {}, "t", "t")
             
             mMap.loadMap(m)
             mE.mMapManager.addMap(mMap, m)
@@ -228,7 +190,7 @@ class GameManager:
         graph.walkable = walkable
         graph.loadGraphFromMaps(mapFile, tileWidth, tileHeigth)
         mE.mGlobalVariables["Graph"] = graph
-
+        
         self.setPortalCoordinates()
         self.setCityCoordinates()
         
@@ -238,33 +200,36 @@ class GameManager:
         while not self.end:
             mE.update()
             
-            if(mE.keyboard.isPressed(pygame.K_SPACE)):
+            if(mE.keyboard.isPressed(pygame.K_ESCAPE)):
                 self.end = True
-            
-            #if(mE.mEntityManager.collision("Mouse", "SlowIcon") and mE.mouse.isPressed("LEFT")):
-            lCollisionTowerMouse = mE.mEntityManager.collision("Mouse", "Tower")
-            if(not lCollisionTowerMouse):
+
+            if(self.canPutTower()):
                 if(mE.mouse.isPressed("LEFT")):
                     self.createTower("Slow",mE.mouse.getPosition())
                 if(mE.mouse.isPressed("RIGHT")):
                     self.createTower("Hit",mE.mouse.getPosition())
 
-            if(mE.keyboard.isPressed(pygame.K_ESCAPE)):
+            if(mE.keyboard.isPressed(pygame.K_SPACE)):
                 self.tabBar.desappear()
 
             if(mE.mGlobalVariables["EndGame"]):
                 print "Game Over"
                 break
 
-
             self.mHUD.update()
             mE.render()
 
+    def canPutTower(self):
+        lCollisionTowerMouse = mE.mEntityManager.collision("Mouse", "Tower")
+        if(not lCollisionTowerMouse):
+            return True
+        return False
     
     def createTower(self,tag,position = Vec2d(0,0)):
         global mE
         global dicTowers
 
+        #If have money
         if(mE.mGlobalVariables["Money"] >= dicTowers[tag]["Cost"]):
             #Update the UI
             mE.mGlobalVariables["Money"] += -dicTowers[tag]["Cost"]

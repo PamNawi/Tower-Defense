@@ -1,19 +1,14 @@
 from Load import *
 
-class HealthBar(Entity):
-    def __init__(self, maxHealth, mdesloc = 1):
-        Entity.__init__(self)
+from UIBar import *
+
+class HealthBar(Bar):
+    def __init__(self, maxHealth):
+        Bar.__init__(self,maxHealth)
         self.maxHealth = maxHealth
         self.health = maxHealth
-
-        self.start = Entity()
-        self.end = Entity()
-        self.middle = []
-        for i in range(maxHealth):
-            self.middle += [ Entity()]
-
-        self.mdesloc = mdesloc
-
+        tag = "HealBar"
+        
     def update(self):
         if(self.health <= 0 ):
             #He is dead jim
@@ -28,25 +23,6 @@ class HealthBar(Entity):
 
         for i in nmiddle:
             mE.mEntityManager.removeEntity(i, "HealthBarMiddle")
-        
-
-    def setPosition(self,position):
-        Entity.setPosition(self,position)
-        self.start.setPosition(position[0],position[1])
-
-        desloc = 0
-        for i in self.middle:
-            i.setPosition(Vec2d(position[0] + desloc * self.mdesloc,position[1]))
-            desloc +=1
-            
-        self.end.setPosition(position[0] + self.mdesloc , position[1])
-
-    def setAnimation(self, startTag, endTag, middleTag):
-        mE.mAnimationManager.setEntityAnimation(self.start, startTag)
-        mE.mAnimationManager.setEntityAnimation(self.end, endTag)
-
-        for i in self.middle:
-            mE.mAnimationManager.setEntityAnimation(i, middleTag)
 
     def addToEntityManager(self):
         mE.mEntityManager.addEntity(self.start, "HealthBarStart", "UI")
@@ -54,7 +30,6 @@ class HealthBar(Entity):
 
         for i in self.middle:
             mE.mEntityManager.addEntity(i, "HealthBarMiddle", "UI")
-
         
         mE.mEntityManager.addEntity(self, "HealthBar", "UI")
 
@@ -66,4 +41,46 @@ class HealthBar(Entity):
             mE.mEntityManager.removeEntity(i, "HealthBarMiddle")
 
         mE.mEntityManager.removeEntity(self, "HealthBar")
+
+
+class CooldownBar(Bar):
+    def __init__(self, maxWMiddle, cooldownTime = 1.0):
+        Bar.__init__(self,maxWMiddle)
+        self.cooldownTime = cooldownTime
+        tag = "CooldownBar"
+
+        self.active = False
+        self.lastActivation = time.clock() - cooldownTime
+
+        self.setPosition(Vec2d(0,0))
+
+    def update(self):
+        if(self.isActive()):
+            diffLastActivation = time.clock() - self.lastActivation
+            if(diffLastActivation >= self.cooldownTime):
+                self.active = False
+
+            cooldown = int((self.maxMiddle * diffLastActivation)/ self.cooldownTime )
+            #print cooldown
+            desloc = 0
+            position = (self.position.x,self.position.y)
+            for i in self.middle[:cooldown]:
+                i.setPosition(Vec2d(position[0]+desloc*self.wMiddle,position[1]))
+                desloc += 1
+
+            self.end.setPosition(position[0] + self.wMiddle * desloc, position[1])
+            for i in self.middle[cooldown:]:
+                i.setPosition(self.start.position)
+
+
+    def activeCooldown(self):
+        if (not self.isActive()):
+            self.active = True
+            self.lastActivation = time.clock()
+            
+
+    def isActive(self):
+        return self.active
+
+    
     
