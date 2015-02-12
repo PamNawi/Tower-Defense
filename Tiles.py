@@ -1,9 +1,6 @@
 # -*- coding: cp1252 -*-
 from Load import *
 from Animations import *
-
-
-from Monster import *
 from MonstersAnimations import *
 from MonstersStats import *
 from Maps import *
@@ -233,8 +230,6 @@ def chooseTarget(self):
         if (distanceEntity(self, m) < self.range):
             self.target = m
             break;
-<<<<<<< HEAD
-      
 
 class City(Tile):
     def __init__(self,dicParams):
@@ -260,7 +255,3 @@ class City(Tile):
 
     def die(self):
         mE.mGlobalVariables["EndGame"] = True
-    
-=======
-
->>>>>>> origin/master
