@@ -1,6 +1,7 @@
 walkable = ["0","3","4"]
-tileWidth   = 64
-tileHeigth  = 64
+tileWidth   = 50
+tileHeigth  = 50
+
 #MapFormat:
 #nameMap = (list of layers on map, file with waves)
 #Map 1

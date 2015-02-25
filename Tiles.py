@@ -23,7 +23,7 @@ class Portal(Tile):
         if(self.nextParticle < 0):
             self.mParticleManager.createParticle(self.position,"spin",
                                                  {"CenterVelocity" : Vec2d(0,random.random() * -.6),
-                                                  "CenterPosition" : self.position+(32,32),
+                                                  "CenterPosition" : self.position+(25,25),
                                                   "Angle"          : random.random() * 360,
                                                   "Radius"         : random.random() * 10,
                                                   "Step"           : 0.05,
@@ -69,6 +69,7 @@ class Portal(Tile):
         m.isDead = False
         m.setCenterBoundingCircle(16,16)
         m.setRadiusBoundingCircle(10)
+        m.setCollisionBlock(Vec2d(32,32))
         return m
 
 class Monster(Entity):
@@ -185,12 +186,14 @@ class Tower(Entity):
     def update(self):            
         if(time.clock() - self.lastShoot >= self.cooldownShoot):
             #If don't have a target, choose one
-            if(self.target == None or self.target.isDead):
+            if(self.target == None or (self.target != None and (self.target.isDead or distanceEntity(self, self.target) < self.range))):
                 self.chooseTargetMethod(self)
             #If have choose a target, go get him!
             if(self.target != None):
+                self.chooseTargetMethod(self)
                 self.lastlastShoot = time.clock()
                 self.towerEffect(self,self.target)
+            self.lastShoot = time.clock() 
 
 
         lMonsters = mE.mEntityManager.getTagEntitys("Monster")
@@ -239,6 +242,7 @@ class City(Tile):
         self.hp.addToEntityManager()
         self.hp.setAnimation("TowerHealthBarStart", "TowerHealthBarEnd", "TowerHealthBarMiddle")
         self.rBoundingCircle = 32
+        self.setCollisionBlock(Vec2d(tileWidth,tileHeigth))
 
     def update(self):
         lMonsters = mE.mEntityManager.getTagEntitys("Monster")

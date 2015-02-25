@@ -34,6 +34,19 @@ class MapManager:
             if(self.maps[mapTile].entitys.has_key(tileTag) ):
                 lTiles = self.maps[mapTile].entitys[tileTag]
         return lTiles
+
+    def getCollisions(self, entity, tag):
+        lCollisions = []
+        maps = self.maps.values()
+        for m in maps:
+            if(m.mEntityManager.entitys.has_key(tag)):
+                tiles = m.mEntityManager.entitys[tag]
+                for t in tiles:
+                    if(isOnCollision(entity, t)):
+                        lCollisions += [ t ]
+        return lCollisions
+                                                 
+            
                 
         
 
@@ -53,6 +66,7 @@ class Map:
     def placeTile(self, i ,j, tag):
         t = self.createTile(tag)
         t.setPosition(j * self.width + self.shiftX, i * self.height + self.shiftY)
+        t.setCollisionBlock(Vec2d(self.width,self.height))
         return t
 
     def placeIsometricTile(self, i, j, tag):

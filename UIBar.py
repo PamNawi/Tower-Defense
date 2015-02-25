@@ -24,7 +24,7 @@ class Bar(Entity):
         for i in self.middle:
             i.setPosition(Vec2d(position[0]+desloc*self.wMiddle,position[1]))
             desloc += 1
-
+        desloc +=1
         self.end.setPosition(position[0] + self.wMiddle * desloc, position[1])
 
     def setAnimation(self, startTag, endTag, middleTag):
@@ -43,6 +43,7 @@ def addBarToEntityManager(bar):
         mE.mEntityManager.addEntity(i,      bar.tag+"Middle", "UI")
 
     mE.mEntityManager.addEntity(bar,        bar.tag, "UI")
+    print "Barra adicionada"
 
 def removeBarFromEntityManager(bar):
     global mE

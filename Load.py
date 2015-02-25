@@ -8,4 +8,4 @@ from MapManager import *
 from ParticleFunctions import *
 
 
-mE = MiniEngine(800,600)
+mE = MiniEngine(1024,768)

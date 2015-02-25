@@ -10,6 +10,8 @@ from AIManager import *
 from Swarm import *
 from graphFromMap import *
 
+from Jukebox import *
+
 pygame.init()
 pygame.font.init()
 
@@ -33,6 +35,8 @@ class Renderer:
         self.renderAll()
         self.renderPrimitives(mPrM)
         self.renderTexts(mTexts)
+
+        #self.renderCollisionBlocks(mEM)
         pygame.display.flip()
 
     def isOnScreen(self, entity):
@@ -60,6 +64,17 @@ class Renderer:
         for e in lEntitys:
             if ( self.isOnScreen(e)):
                 self.onScreen += [e]
+
+    def renderCollisionBlocks(self, mEM):
+        lEntitys = []
+        lTags = mEM.entitys.keys()
+
+        lCollisionBlocks = []
+        for tag in lTags:
+            for entity in mEM.entitys[tag]:
+                lCollisionBlocks += [entity.collisionBlock.rect]
+        for r in lCollisionBlocks:
+            pygame.draw.rect(self.screen,(255,0,0),r)
 
     def renderParticles(self, mPM):
         lEntitys = mPM.getParticles()
@@ -152,6 +167,8 @@ class MiniEngine:
         self.mSwarmManager = SwarmManager()
         self.mMapManager = MapManager()
         self.mParticleManager = ParticleManager(nParticles)
+
+        self.mJukebox = Jukebox()
 
         self.mGlobalVariables = {}
         pygame.key.set_repeat(100,100)

@@ -4,6 +4,7 @@ from miniEngine import *
 from ParticleFunctions import *
 from Tiles import *
 from Animations import *
+from Sounds import *
 from HUD import *
 from Maps import *
 from TowerDefenseGraph import *
@@ -15,7 +16,6 @@ class GameManager:
         self.actualLevel = 0
         self.portalTiles = None
         self.cityTiles = None
-
         pass
 
     def load(self):
@@ -25,6 +25,16 @@ class GameManager:
         self.loadAnimations()
         self.loadUI()
         self.loadMap()
+        self.loadSounds()
+        self.loadParticles()
+
+    def loadParticles(self):
+        mE.mParticleManager.addUpdateFunction(lImagesPortalParticle[0], lImagesPortalParticle[1], cascate , "cascate")
+        
+    def loadSounds(self):
+        mE.mJukebox.LoadSong(levelSong, "LevelSong")
+        mE.mJukebox.LoadSound(newTowerSound, "NewTower")
+        
 
     def loadAnimations(self):
         #Especial Tiles Animations
@@ -39,6 +49,7 @@ class GameManager:
             mE.mAnimationManager.addAnimation(mAni["Animation"][0], mAni["Animation"][1], mAni["AnimationTag"])
             
         #UI
+        mE.mAnimationManager.addAnimation(lImagesMouse[0],lImagesMouse[1], "Mouse")
         mE.mAnimationManager.addAnimation(lImagesTabBar[0],lImagesTabBar[1], "TabBar")
         mE.mAnimationManager.addAnimation(lImagesBottomBar[0],lImagesBottomBar[1], "BottomBar")
 
@@ -55,6 +66,18 @@ class GameManager:
         mE.mAnimationManager.addAnimation(lImagesHPBarTowerS[0], lImagesHPBarTowerS[1], "TowerHealthBarStart")
         mE.mAnimationManager.addAnimation(lImagesHPBarTowerE[0], lImagesHPBarTowerE[1], "TowerHealthBarEnd")
         mE.mAnimationManager.addAnimation(lImagesHPBarTowerM[0], lImagesHPBarTowerM[1], "TowerHealthBarMiddle")
+
+
+            #CooldownBars Towers
+        mE.mAnimationManager.addAnimation(lImagesHPBarTowerS[0], lImagesHPBarTowerS[1], "CooldownBarStart")
+        mE.mAnimationManager.addAnimation(lImagesHPBarTowerE[0], lImagesHPBarTowerE[1], "CooldownBarEnd")
+        mE.mAnimationManager.addAnimation(lImagesHPBarTowerM[0], lImagesHPBarTowerM[1], "CooldownBarMiddle")
+
+            #Projectiles
+        mE.mAnimationManager.addAnimation(lImagesSimpleProjectil[0],lImagesSimpleProjectil[1], "SimpleProjectil")
+        mE.mAnimationManager.addAnimation(lImagesSlowProjectil[0],lImagesSlowProjectil[1], "SlowProjectil")
+        
+                                                                
 
             #HealthBar City
         mE.mEntityManager.defineLayerOrder(["Towers", "Monsters", "UI"])
@@ -89,24 +112,21 @@ class GameManager:
         bottomBar = Entity()
         mE.mEntityManager.addEntity(bottomBar,"BottomBar","UI")
         mE.mAnimationManager.setEntityAnimation(bottomBar, "BottomBar")
-        bottomBar.setPosition(3 *64 ,8*64)
+        bottomBar.setPosition(50 ,686)
 
-        #Create the SlowButton
-        slowButton = CooldownButton()
-        slowButton.setCenterBoundingCircle(16,16)
-        slowButton.setRadiusBoundingCircle(20)
-        self.mHUD.addButton(self.showTowerStats, "Slow",Vec2d(3*64+29,8*64 +26),"SlowIcon")
+        #Create the SlowIcon
+        self.slowIcon = self.mHUD.addCooldownButton(self.showTowerStats, "Slow",Vec2d(79,712),"SlowIcon", Vec2d(34,34))
+        self.slowIcon.cooldownBar.setPosition(Vec2d(86,751))
         
-        #Create Damage Icon
-        damageIcon = CooldownButton()
-        damageIcon.setCenterBoundingCircle(16,16)
-        damageIcon.setRadiusBoundingCircle(20)
-        self.mHUD.addButton(self.showTowerStats, "Hit", Vec2d(3 *64 +73 ,8*64 + 26), "DamageIcon")
-
+        #Create DamageIcon
+        self.damageIcon = self.mHUD.addCooldownButton(self.showTowerStats, "Hit", Vec2d(123 , 712), "DamageIcon", Vec2d(34,34))
+        self.damageIcon.cooldownBar.setPosition(Vec2d(130,751))
+        
         #Add TabBar for tower stats
         self.tabBar = TabBar()
-        self.tabBar.setMinDesloc(800,80)
-        self.tabBar.setMaxDesloc(800-180,80)
+        tabBarPos = (1024, 80)
+        self.tabBar.setMinDesloc(tabBarPos[0],tabBarPos[1])
+        self.tabBar.setMaxDesloc(tabBarPos[0]-180,tabBarPos[1])
         self.tabBar.vecMaxSpeedDesloc  = 10
         self.mHUD.addTabBar(self.tabBar, "TabBar")
 
@@ -114,14 +134,14 @@ class GameManager:
         font = pygame.font.Font(None,18)
         mE.mTextManager.addFont(font, "None14")
 
-        self.addTextTabBar((840,87),"TowerStats")
+        self.addTextTabBar((tabBarPos[0] + 40,87),"TowerStats")
         mE.mTextManager.texts["TowerStats"].content = "Tower Stats"
 
-        self.addTextTabBar((810,120),"TowerType")
-        self.addTextTabBar((810,150),"TowerDamage")
-        self.addTextTabBar((810,180),"TowerHP")
-        self.addTextTabBar((810,210),"TowerCooldown")
-        self.addTextTabBar((810,240),"TowerCost")
+        self.addTextTabBar((tabBarPos[0] +10,120),"TowerType")
+        self.addTextTabBar((tabBarPos[0] +10,150),"TowerDamage")
+        self.addTextTabBar((tabBarPos[0] +10,180),"TowerHP")
+        self.addTextTabBar((tabBarPos[0] +10,210),"TowerCooldown")
+        self.addTextTabBar((tabBarPos[0] +10,240),"TowerCost")
 
         #Add texts to HUD
         self.moneyUI = Text()
@@ -160,7 +180,7 @@ class GameManager:
         #Load the map
         i = 0
         for m in mapFile:
-            mMap = Map(64,64, 0,0)
+            mMap = Map(tileWidth,tileHeigth, 0,0)
             mMap.mAnimationManager.addAnimation(lImagesGrass[0],lImagesGrass[1],"0")
             mMap.mAnimationManager.addAnimation(lImagesMountain[0],lImagesMountain[1],"1")
             
@@ -197,6 +217,8 @@ class GameManager:
     def gameLoop(self):
         self.end = False
 
+        #mE.mJukebox.PlaySong("LevelSong")
+
         while not self.end:
             mE.update()
             
@@ -220,7 +242,8 @@ class GameManager:
             mE.render()
 
     def canPutTower(self):
-        lCollisionTowerMouse = mE.mEntityManager.collision("Mouse", "Tower")
+        mouse = self.mHUD.mouseEntity
+        lCollisionTowerMouse = mE.mMapManager.getCollisions(mouse, "t") + mE.mMapManager.getCollisions(mouse, "1") + mE.mEntityManager.collision("Mouse", "Tower")
         if(not lCollisionTowerMouse):
             return True
         return False
@@ -253,6 +276,8 @@ class GameManager:
                     
             if(dicTowers[tag]["ChooseMethod"] != None):
                 t.chooseTargetMethod = dicTowers[tag]["ChooseMethod"]
+
+            t.setCollisionBlock(Vec2d(tileWidth,tileHeigth))
 
             #Put on Graph
             graph = mE.mGlobalVariables["Graph"]

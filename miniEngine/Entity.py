@@ -13,7 +13,12 @@ class Entity:
         self.animations = {}
         self.layer = None
 
-        self.collisionList = None
+        self.collisionList = []
+        self.collisionBlock = CollisionBlock()
+
+    def setCollisionBlock(self, vecBottomCorner):
+        self.collisionBlock.setRect(Vec2d(0,0),vecBottomCorner)
+        self.collisionBlock.setPosition(self.position)
 
     def update(self):
         pass
@@ -25,6 +30,8 @@ class Entity:
             self.position = Vec2d(x.x , x.y)
         else:
             self.position = Vec2d(x,y)
+
+        self.collisionBlock.setPosition(x,y)
 
     def setRadiusBoundingCircle(self, r):
         self.rBoundingCircle = r
@@ -41,6 +48,10 @@ class Entity:
     def startAnimation(self,tag):
         self.surface = self.animations[tag]
 
+
+    def addCollisionBlock(self, cb):
+        self.collisionList.append(cb)
+
 def distanceEntity(e1, e2):
     return e1.position.get_distance(e2.position)
 
@@ -51,13 +62,7 @@ def distanceBoundingCircles(e1,e2):
     return d
 
 def isOnCollision(e1, e2):
-    if(e1.collisionList == None):
-        d = distanceBoundingCircles(e1,e2)
-        if( d <= e1.rBoundingCircle + e2.rBoundingCircle):
-            return True
-    else:
-        return e1.collisionList.getCollisionList(e2.collisionList)
-    return False
+    return e1.collisionBlock.collision(e2.collisionBlock)
 
 class Animation:
     def __init__(self, lImages, speed):

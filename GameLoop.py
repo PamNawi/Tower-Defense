@@ -38,27 +38,32 @@ class Game:
         mE.mAnimationManager.addAnimation(lImagesButton[0],lImagesButton[1], "Button")
         mE.mAnimationManager.addAnimation(lImagesMouse[0],lImagesMouse[1], "Mouse")
 
+
+    def loadMenuSounds(self):
+        mE.mJukebox.LoadSong(menuSong, "MenuSong")
+
     def menuLoop(self):
         global mE
         mE.cleanEntitys()
         self.loadMenuAnimations()
+        self.loadMenuSounds()
         
         self.mHud = HUD()
         self.background = Entity()
         mE.mEntityManager.addEntity(self.background, "Background", "BG")
         mE.mAnimationManager.setEntityAnimation(self.background, "Background")
 
-        self.mHud.addButton(self.startGame, None, Vec2d(100,100), "PlayButton")
-        self.mHud.addButton(self.startGame, None, Vec2d(140,170), "OptionsButton")
-        self.mHud.addButton(self.endGame, None, Vec2d(180,240), "QuitButton")
+        self.mHud.addButton(self.startGame, None, Vec2d(100,100), "PlayButton", Vec2d(192,64))
+        self.mHud.addButton(self.startGame, None, Vec2d(140,170), "OptionsButton", Vec2d(192,64))
+        self.mHud.addButton(self.endGame, None, Vec2d(180,240), "QuitButton", Vec2d(192,64))
 
         mE.mAnimationManager.addAnimation(lImagesHPBarEnemyS[0], lImagesHPBarEnemyS[1], "CooldownBarStart")
         mE.mAnimationManager.addAnimation(lImagesHPBarEnemyE[0], lImagesHPBarEnemyE[1], "CooldownBarEnd")
         mE.mAnimationManager.addAnimation(lImagesHPBarEnemyM[0], lImagesHPBarEnemyM[1], "CooldownBarMiddle")
 
-        self.mHud.addCooldownButton(self.printin, None, Vec2d(500,500), "PlayButton")
-
         mE.mEntityManager.defineLayerOrder(["BG"])
+
+        #mE.mJukebox.PlaySong("MenuSong")
         
         while not self.end:
             mE.update()

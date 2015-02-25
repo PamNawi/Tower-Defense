@@ -46,7 +46,7 @@ class SteeringEntity(Entity):
         self.aceleration = self.force * (1/self.mass)
         self.velocity = self.velocity + self.aceleration        
         self.velocity = self.velocity.normalized() * self.maxVelocity
-        self.position = self.position + self.velocity
+        self.setPosition(self.position+ self.velocity)#self.position = self.position + self.velocity
 
     def sumForces(self):
         self.force = self.wSeek         * self.Seek(self.targetPosition)

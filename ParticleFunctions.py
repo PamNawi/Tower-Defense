@@ -32,3 +32,15 @@ def spin(dicParams):
     if(dicParams["Dispersion"] <= 0):
         p.disposable = True
     return dicParams
+
+def cascate(dicParams):
+    p           = dicParams["Particle"]
+    velocity    = dicParams["Velocity"]
+    
+    p.setPosition(p.position.x,p.position.y+ velocity)
+
+    
+    dicParams["Dispersion"] += -1
+    if(dicParams["Dispersion"] <= 0):
+        p.disposable = True
+    return dicParams

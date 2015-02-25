@@ -43,3 +43,7 @@ lImagesPortal = ([".//Resources//portal.png"],0.3)
 
 lImagesSlowTower = ([".//Resources//Towers//torreMagica.png"],0.3)
 lImagesDamageTower = ([".//Resources//Towers//torreComum.png"],0.3)
+
+#Projectiles
+lImagesSimpleProjectil = ([".//Resources//Projectiles//normalProjectile.png"],1)
+lImagesSlowProjectil = ([".//Resources//Projectiles//slowProjectile.png"],1)

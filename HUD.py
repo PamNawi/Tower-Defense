@@ -16,9 +16,10 @@ class HUD:
         self.mouseEntity = Entity()
         mE.mEntityManager.addEntity(self.mouseEntity, "Mouse")
         mE.mAnimationManager.setEntityAnimation(self.mouseEntity, "Mouse")
-        self.mouseEntity.setRadiusBoundingCircle(1)        
+        self.mouseEntity.setCollisionBlock(Vec2d(4,4))
+        #self.mouseEntity.setRadiusBoundingCircle(1)        
 
-    def addButton(self, bFunction, bParams, bPosition, bTagAnimation):
+    def addButton(self, bFunction, bParams, bPosition, bTagAnimation, vecCollision):
         global mE
         b = Button()
         mE.mEntityManager.addEntity(b,"Button")
@@ -27,25 +28,31 @@ class HUD:
         b.setPosition(bPosition)
         b.function = bFunction
         b.params = bParams
+        b.setCollisionBlock(vecCollision)
+
+        return b
 
 
-    def addCooldownButton(self, bFunction, bParams, bPosition, bTagAnimation, cooldown = 1.0):
+    def addCooldownButton(self, bFunction, bParams, bPosition, bTagAnimation, vecCollision, cooldown = 1.0):
         global mE
         b = CooldownButton()
-        mE.mEntityManager.addEntity(b,"Button")
+        mE.mEntityManager.addEntity(b,"Button","UI")
         mE.mAnimationManager.setEntityAnimation(b, bTagAnimation)
         
         b.setRadiusBoundingCircle(5)
         b.setPosition(bPosition)
         b.function = bFunction
         b.params = bParams
+        b.setCollisionBlock(vecCollision)
 
         addBarToEntityManager(b.cooldownBar)
+
+        return b
 
     def addTabBar(self, tabBar, tag):
         global mE
         self.tabBars[tag] = tabBar
-        mE.mEntityManager.addEntity(tabBar, tag +"TabBar")
+        mE.mEntityManager.addEntity(tabBar, tag +"TabBar","UI")
         mE.mAnimationManager.setEntityAnimation(tabBar,tag)
 
     def addEntityToTabBar(self, entity, tagTabBar):
@@ -57,9 +64,10 @@ class HUD:
         self.mouseEntity.setPosition(mE.mouse.getPosition())
 
         #Test for buttons
-        lButtons = mE.mEntityManager.collision("Mouse","Button")
-        if(lButtons):
-            lButtons[0][1].startFunction()
+        if(mE.mouse.isPressed("LEFT")):
+            lButtons = mE.mEntityManager.collision("Mouse","Button")
+            if(lButtons):
+                lButtons[0][1].startFunction()
 
         #Update all texts
         for t in self.texts:
@@ -70,14 +78,6 @@ class HUD:
         mE.mTextManager.setTextFont(tag, fontTag)
         self.texts[tag] = (text,variableTag)
         
-
-def createEntity(params):
-    e = Entity()
-    mE.mEntityManager.addEntity(e,"Entity")
-    mE.mAnimationManager.setEntityAnimation(e, "Aqua1")
-    e.setPosition(Vec2d(random.random() * 800, random.random()* 600))
-    return e
-
 
 class Button(Entity):
     def __init__(self):
@@ -94,7 +94,7 @@ class Button(Entity):
 class CooldownButton(Button):
     def __init__(self, cooldown = 1.0):
         Button.__init__(self)
-        self.cooldownBar = CooldownBar(10, cooldown)
+        self.cooldownBar = CooldownBar(18, cooldown)
         self.cooldownBar.setAnimation("CooldownBarStart","CooldownBarEnd", "CooldownBarMiddle")
 
     def startFunction(self):

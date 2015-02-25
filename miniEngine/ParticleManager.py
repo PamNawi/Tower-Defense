@@ -20,6 +20,14 @@ class Particle(Entity):
        self.updateFunctionParams["Particle"] = self
        self.disposable = False
 
+    def setPosition(self,x,y = None):
+        if(type(x) == tuple):
+            self.position = Vec2d(x[0],x[1])
+        elif(y == None):
+            self.position = Vec2d(x.x , x.y)
+        else:
+            self.position = Vec2d(x,y)
+
 class ParticleManager:
     def __init__(self, nParticles = 1000):
         self.notUsedParticles = []
