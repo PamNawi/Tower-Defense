@@ -43,8 +43,7 @@ def addBarToEntityManager(bar):
         mE.mEntityManager.addEntity(i,      bar.tag+"Middle", "UI")
 
     mE.mEntityManager.addEntity(bar,        bar.tag, "UI")
-    print "Barra adicionada"
-
+    
 def removeBarFromEntityManager(bar):
     global mE
     mE.mEntityManager.removeEntity(bar.start,   bar.tag+"Start")

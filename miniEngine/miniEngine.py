@@ -179,6 +179,13 @@ class MiniEngine:
 
         self.stateStack = []
 
+        self.pause = False
+        self.updateOnPause = []
+        self.mGlobalVariables["GameTime"] = 0.0
+        self.mGlobalVariables["PausedTime"] = 0.0
+        self.mGlobalVariables["ActualPauseTime"] = 0.0
+        self.mGlobalVariables["LastPause"] = 0.0
+
     def render(self):
         self.mRenderer.render(self.mEntityManager, self.mPrimitiveManager, self.mTextManager, self.mMapManager, self.mParticleManager)
 
@@ -196,17 +203,25 @@ class MiniEngine:
         self.mEntityManager.entitys = {}
                
     def update(self):
-        self.mEntityManager.update()
-        self.mMapManager.update()
-        self.mParticleManager.update()
+        self.getGameTime()
+        #self.printTime()
         
+        if(not self.pause):
+            self.mEntityManager.update()
+            self.mMapManager.update()
+        else:
+            self.mEntityManager.update(self.updateOnPause)
+            self.mMapManager.update(self.updateOnPause)
+
+        self.mParticleManager.update() 
         self.endGame = self.treatEvents()
         self.mouse.update(pygame.mouse.get_pos(), pygame.mouse.get_pressed())
         self.keyboard.update(pygame.key.get_pressed())
 
-
     def pushState(self):
-        state = (self.mEntityManager, self.mAnimationManager, self.mPrimitiveManager, self.mTextManager, self.mSwarmManager, self.mMapManager, self.mParticleManager)
+        self.mJukebox.StopMusic()
+        self.mJukebox.ToggleSound(False)
+        state = (self.mEntityManager, self.mAnimationManager, self.mPrimitiveManager, self.mTextManager, self.mSwarmManager, self.mMapManager, self.mParticleManager, self.mJukebox)
         self.stateStack.append(state)
         
         self.mEntityManager = EntityManager()
@@ -216,6 +231,7 @@ class MiniEngine:
         self.mSwarmManager = SwarmManager()
         self.mMapManager = MapManager()
         self.mParticleManager = ParticleManager(self.nParticles)
+        self.mJukebox = Jukebox()
 
     def popState(self):
         state = self.stateStack.pop()
@@ -227,7 +243,37 @@ class MiniEngine:
         self.mSwarmManager = state[4]
         self.mMapManager = state[5]
         self.mParticleManager = state[6]
+        self.mJukebox = state[7]
 
 
     def setGlobalVariable(self, tag, value = None):
-        self.mGlobalVariables[tag] = value     
+        self.mGlobalVariables[tag] = value
+
+    def getGameTime(self):
+        if(self.pause):
+            self.mGlobalVariables["ActualPauseTime"] =   time.clock() - self.mGlobalVariables["LastPause"]
+            self.mGlobalVariables["GameTime"] = time.clock() - self.mGlobalVariables["PausedTime"] - self.mGlobalVariables["ActualPauseTime"]
+        else:
+            self.mGlobalVariables["GameTime"] = time.clock() - self.mGlobalVariables["PausedTime"]
+        return self.mGlobalVariables["GameTime"]
+
+    def pauseGame(self):
+        self.getGameTime()
+        self.mGlobalVariables["LastPause"] = time.clock()
+        self.mGlobalVariables["ActualPauseTime"] = 0.0
+        self.pause = True
+        #print "Pause"
+        #self.printTime()
+
+    def unpauseGame(self):
+        self.mGlobalVariables["PausedTime"] += self.mGlobalVariables["ActualPauseTime"]
+        self.mGlobalVariables["ActualPauseTime"] = 0.0
+        self.getGameTime()
+        self.pause = False
+        #print "Despause"
+
+
+    def printTime(self):
+        print(self.mGlobalVariables["GameTime"],self.mGlobalVariables["PausedTime"],self.mGlobalVariables["ActualPauseTime"], time.clock())
+
+        

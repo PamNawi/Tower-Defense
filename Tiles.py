@@ -14,7 +14,7 @@ class Portal(Tile):
         
         self.nextParticle = -1
         self.mParticleManager.addUpdateFunction(lImagesPortalParticle[0],lImagesPortalParticle[1] , spin, "spin")
-        self.lastSummon = 0.0
+        self.lastSummon = mE.mGlobalVariables["GameTime"]
 
         self.actualWave = 0
         self.newWave()
@@ -22,7 +22,7 @@ class Portal(Tile):
     def update(self):
         if(self.nextParticle < 0):
             self.mParticleManager.createParticle(self.position,"spin",
-                                                 {"CenterVelocity" : Vec2d(0,random.random() * -.6),
+                                                 {"CenterVelocity" : Vec2d(0,random.random() * -.6 -.1),
                                                   "CenterPosition" : self.position+(25,25),
                                                   "Angle"          : random.random() * 360,
                                                   "Radius"         : random.random() * 10,
@@ -32,8 +32,8 @@ class Portal(Tile):
             self.nextParticle = random.random() * 50
         self.nextParticle += -1
 
-        if(time.clock() - self.lastSummon >= 1.0):
-            self.lastSummon = time.clock()
+        if(mE.mGlobalVariables["GameTime"] - self.lastSummon >= 1.0):
+            self.lastSummon = mE.mGlobalVariables["GameTime"]
             self.summonNextMonster()
         
     def newWave(self):
@@ -45,6 +45,7 @@ class Portal(Tile):
         self.actualWave += 1
 
     def summonNextMonster(self):
+        #print "New Monster"
         #print self.monsters
         if(self.monsters):
             statsMonster = random.choice(self.monsters)
@@ -177,14 +178,14 @@ class Tower(Entity):
         self.range = radiusRange
 
         self.cooldownShoot = 0.5
-        self.lastShoot = time.clock() - self.cooldownShoot
+        self.lastShoot = mE.mGlobalVariables["GameTime"] - self.cooldownShoot
 
         self.towerEffect = None
         self.chooseTargetMethod = chooseTarget
         self.tag = ""
 
     def update(self):            
-        if(time.clock() - self.lastShoot >= self.cooldownShoot):
+        if(mE.mGlobalVariables["GameTime"] - self.lastShoot >= self.cooldownShoot):
             #If don't have a target, choose one
             if(self.target == None or (self.target != None and (self.target.isDead or distanceEntity(self, self.target) < self.range))):
                 self.chooseTargetMethod(self)
@@ -193,7 +194,7 @@ class Tower(Entity):
                 self.chooseTargetMethod(self)
                 self.lastlastShoot = time.clock()
                 self.towerEffect(self,self.target)
-            self.lastShoot = time.clock() 
+            self.lastShoot = mE.mGlobalVariables["GameTime"]
 
 
         lMonsters = mE.mEntityManager.getTagEntitys("Monster")

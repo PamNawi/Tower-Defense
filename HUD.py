@@ -53,7 +53,7 @@ class HUD:
         global mE
         self.tabBars[tag] = tabBar
         mE.mEntityManager.addEntity(tabBar, tag +"TabBar","UI")
-        mE.mAnimationManager.setEntityAnimation(tabBar,tag)
+        mE.mAnimationManager.setEntityAnimation(tabBar,"TabBar")
 
     def addEntityToTabBar(self, entity, tagTabBar):
         self.tabBars[tag].addEntity(entity)
@@ -104,11 +104,14 @@ class CooldownButton(Button):
             else:
                 self.function()
 
-            self.cooldownBar.activeCooldown()
+            #self.cooldownBar.activeCooldown()
 
     def update(self):
         Button.update(self)
         self.cooldownBar.update()
+
+    def activeCooldown(self):
+        self.cooldownBar.activeCooldown()
 
 class TabBar(Entity):
     def __init__(self):
@@ -140,7 +143,7 @@ class TabBar(Entity):
             self.open = True
             self.vecSpeedDesloc = Vec2d(x,y)
 
-    def desappear(self):
+    def disappear(self):
         if(self.open):
             if(self.vecMinDesloc.x > self.position.x):
                 x = self.vecMaxSpeedDesloc

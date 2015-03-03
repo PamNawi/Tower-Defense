@@ -16,6 +16,10 @@ class GameManager:
         self.actualLevel = 0
         self.portalTiles = None
         self.cityTiles = None
+
+        self.selectedTower = ""
+
+        mE.updateOnPause = ["Mouse", "Button","InfoTabBar"]
         pass
 
     def load(self):
@@ -75,9 +79,7 @@ class GameManager:
 
             #Projectiles
         mE.mAnimationManager.addAnimation(lImagesSimpleProjectil[0],lImagesSimpleProjectil[1], "SimpleProjectil")
-        mE.mAnimationManager.addAnimation(lImagesSlowProjectil[0],lImagesSlowProjectil[1], "SlowProjectil")
-        
-                                                                
+        mE.mAnimationManager.addAnimation(lImagesSlowProjectil[0],lImagesSlowProjectil[1], "SlowProjectil")                          
 
             #HealthBar City
         mE.mEntityManager.defineLayerOrder(["Towers", "Monsters", "UI"])
@@ -114,13 +116,17 @@ class GameManager:
         mE.mAnimationManager.setEntityAnimation(bottomBar, "BottomBar")
         bottomBar.setPosition(50 ,686)
 
+        self.icons = {}
+
         #Create the SlowIcon
-        self.slowIcon = self.mHUD.addCooldownButton(self.showTowerStats, "Slow",Vec2d(79,712),"SlowIcon", Vec2d(34,34))
-        self.slowIcon.cooldownBar.setPosition(Vec2d(86,751))
+        slowButton = self.mHUD.addCooldownButton(self.selectTower, "Slow",Vec2d(79,712),"SlowIcon", Vec2d(34,34))
+        slowButton.cooldownBar.setPosition(Vec2d(86,751))
+        self.icons["Slow"] = slowButton
         
         #Create DamageIcon
-        self.damageIcon = self.mHUD.addCooldownButton(self.showTowerStats, "Hit", Vec2d(123 , 712), "DamageIcon", Vec2d(34,34))
-        self.damageIcon.cooldownBar.setPosition(Vec2d(130,751))
+        hitButton = self.mHUD.addCooldownButton(self.selectTower, "Hit", Vec2d(123 , 712), "DamageIcon", Vec2d(34,34))
+        hitButton.cooldownBar.setPosition(Vec2d(130,751))
+        self.icons["Hit"] = hitButton
         
         #Add TabBar for tower stats
         self.tabBar = TabBar()
@@ -128,24 +134,32 @@ class GameManager:
         self.tabBar.setMinDesloc(tabBarPos[0],tabBarPos[1])
         self.tabBar.setMaxDesloc(tabBarPos[0]-180,tabBarPos[1])
         self.tabBar.vecMaxSpeedDesloc  = 10
-        self.mHUD.addTabBar(self.tabBar, "TabBar")
+        self.mHUD.addTabBar(self.tabBar, "Info")
 
         #Create the texts for tower stats
-        font = pygame.font.Font(None,18)
+        font = pygame.font.Font(None,16)
         mE.mTextManager.addFont(font, "None14")
 
         self.addTextTabBar((tabBarPos[0] + 40,87),"TowerStats")
         mE.mTextManager.texts["TowerStats"].content = "Tower Stats"
 
         self.addTextTabBar((tabBarPos[0] +10,120),"TowerType")
-        self.addTextTabBar((tabBarPos[0] +10,150),"TowerDamage")
-        self.addTextTabBar((tabBarPos[0] +10,180),"TowerHP")
-        self.addTextTabBar((tabBarPos[0] +10,210),"TowerCooldown")
-        self.addTextTabBar((tabBarPos[0] +10,240),"TowerCost")
+        self.addTextTabBar((tabBarPos[0] +10,140),"TowerDamage")
+        self.addTextTabBar((tabBarPos[0] +10,160),"TowerHP")
+        self.addTextTabBar((tabBarPos[0] +10,180),"TowerCooldown")
+        self.addTextTabBar((tabBarPos[0] +10,200),"TowerCost")
 
         #Add texts to HUD
         self.moneyUI = Text()
         self.mHUD.addText(self.moneyUI, "Money", "None14", "MoneyUI")
+
+        font = pygame.font.Font(None,32)
+        mE.mTextManager.addFont(font, "None32")
+
+        self.pauseUI = Text()
+        self.pauseUI.setPosition(500, 200)
+        mE.mTextManager.addText(self.pauseUI,"PauseUI")
+        mE.mTextManager.setTextFont("PauseUI", "None32")
                 
     def addTextTabBar(self, position, tag):
         t = Text()
@@ -217,7 +231,7 @@ class GameManager:
     def gameLoop(self):
         self.end = False
 
-        #mE.mJukebox.PlaySong("LevelSong")
+        mE.mJukebox.PlaySong("LevelSong")
 
         while not self.end:
             mE.update()
@@ -225,18 +239,21 @@ class GameManager:
             if(mE.keyboard.isPressed(pygame.K_ESCAPE)):
                 self.end = True
 
-            if(self.canPutTower()):
-                if(mE.mouse.isPressed("LEFT")):
-                    self.createTower("Slow",mE.mouse.getPosition())
-                if(mE.mouse.isPressed("RIGHT")):
-                    self.createTower("Hit",mE.mouse.getPosition())
+            if(self.selectedTower != "" and mE.mouse.isPressed("LEFT") and self.canPutTower()):
+                self.createTower(self.selectedTower, mE.mouse.getPosition())
 
-            if(mE.keyboard.isPressed(pygame.K_SPACE)):
-                self.tabBar.desappear()
+            if(mE.keyboard.isPressed(pygame.K_UP) and  mE.pause):
+                self.pauseUI.content = ""
+                mE.unpauseGame()
+            if(mE.keyboard.isPressed(pygame.K_DOWN) and not mE.pause):
+                self.pauseUI.content = "PAUSE"
+                mE.pauseGame()
 
             if(mE.mGlobalVariables["EndGame"]):
                 print "Game Over"
                 break
+
+            self.showInfo()
 
             self.mHUD.update()
             mE.render()
@@ -244,10 +261,18 @@ class GameManager:
     def canPutTower(self):
         mouse = self.mHUD.mouseEntity
         lCollisionTowerMouse = mE.mMapManager.getCollisions(mouse, "t") + mE.mMapManager.getCollisions(mouse, "1") + mE.mEntityManager.collision("Mouse", "Tower")
-        if(not lCollisionTowerMouse):
+        if(not lCollisionTowerMouse and not self.icons[self.selectedTower].cooldownBar.isActive() ):
             return True
         return False
-    
+
+    def showInfo(self):
+        lCollisionIconMouse = mE.mEntityManager.collision("Mouse", "Button")
+        if(lCollisionIconMouse):
+            button = lCollisionIconMouse[0][1]
+            self.showTowerStats(button.params)
+
+        else:
+            self.tabBar.disappear()
     def createTower(self,tag,position = Vec2d(0,0)):
         global mE
         global dicTowers
@@ -283,12 +308,19 @@ class GameManager:
             graph = mE.mGlobalVariables["Graph"]
             graph.addWeightNode(t.graphPosition,50)
             self.recalculateRouteAllMonsters()
+
+            #Start iconCooldown
+            self.icons[self.selectedTower].activeCooldown()
             return t
 
     def recalculateRouteAllMonsters(self):
         monsters = mE.mEntityManager.getTagEntitys("Monster")
         for m in monsters:
             m.recalculateRoute()
+
+    
+    def selectTower(self,params):
+        self.selectedTower = params
 
     def showTowerStats(self,params):
         tTowerType = mE.mTextManager.texts["TowerType"]

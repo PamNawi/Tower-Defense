@@ -41,11 +41,17 @@ class EntityManager:
     def removeEntity(self, entity, tag):
         self.entitys[tag].remove(entity)        
 
-    def update(self):
-        lEntitys = self.entitys.values()
+    def update(self, lTags = None):
+        lEntitys = []
+        if(lTags != None):
+            for tag in lTags:
+                lEntitys += [self.getTagEntitys(tag)]
+        else:
+            lEntitys = self.entitys.values()
         for l in lEntitys:
             for e in l:
                 e.update()
+        
 
     def getTagEntitys(self, tag):
         if(self.entitys.has_key(tag)):

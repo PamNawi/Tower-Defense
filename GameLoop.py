@@ -26,9 +26,6 @@ class Game:
 
         mE.popState()
 
-    def printin(self):
-        print "Start Cooldown"
-
     def loadMenuAnimations(self):
         mE.mAnimationManager.addAnimation(lImagesBackground[0],lImagesBackground[1],"Background")  
         mE.mAnimationManager.addAnimation(lImagesPlayButton[0],lImagesPlayButton[1],"PlayButton")
@@ -63,7 +60,7 @@ class Game:
 
         mE.mEntityManager.defineLayerOrder(["BG"])
 
-        #mE.mJukebox.PlaySong("MenuSong")
+        mE.mJukebox.PlaySong("MenuSong")
         
         while not self.end:
             mE.update()

@@ -7,7 +7,7 @@ lImagesBackground       = ([".//Resources//MainMenu//background2.png"],1)
 #UI
 lImagesButton       = ([".//Resources//UI//button.png"],1)
 lImagesMouse        = ([".//Resources//UI//mouse.png"],1)
-lImagesTabBar       = ([".//Resources//UI//bartab2.png"],1)
+lImagesTabBar       = ([".//Resources//UI//bartab3.png"],1)
 lImagesBottomBar    = ([".//Resources//UI//bottomBar.png"],1)
 
     #Icons

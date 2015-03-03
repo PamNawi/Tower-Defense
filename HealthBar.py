@@ -50,16 +50,18 @@ class CooldownBar(Bar):
         tag = "CooldownBar"
 
         self.active = False
-        self.lastActivation = time.clock() - cooldownTime
+        self.lastActivation =  0.0 #mE.mGlobalVariables["GameTime"] - cooldownTime
 
         self.setPosition(Vec2d(0,0))
 
     def update(self):
         if(self.isActive()):
-            diffLastActivation = time.clock() - self.lastActivation
+            #print (mE.getGameTime(),mE.mGlobalVariables["PausedTime"],self.lastActivation)
+            diffLastActivation = mE.getGameTime() - self.lastActivation
             if(diffLastActivation >= self.cooldownTime):
                 self.active = False
 
+            #print diffLastActivation
             cooldown = int((self.maxMiddle * diffLastActivation)/ self.cooldownTime )
             #print cooldown
             desloc = 0
@@ -76,9 +78,7 @@ class CooldownBar(Bar):
     def activeCooldown(self):
         if (not self.isActive()):
             self.active = True
-            self.lastActivation = time.clock()
-            
-
+            self.lastActivation =  mE.getGameTime()
     def isActive(self):
         return self.active
 

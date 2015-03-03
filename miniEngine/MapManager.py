@@ -9,10 +9,10 @@ class MapManager:
     def addMap(self, newMap, tag):
         self.maps[tag] = newMap
 
-    def update(self):
+    def update(self, updateOnPause = None):
         lMaps = self.maps.values()
         for m in lMaps:
-            m.update()
+            m.update(updateOnPause)
 
     def setMapLayers(self,layerOrder):
         self.layers = layerOrder
@@ -127,8 +127,8 @@ class Map:
     def createFactoryTile(self, tileType, paramsTile, tagAnimationTile, tag):
         self.mTileFactory[tag] = {"TileType" : tileType, "TileParams": paramsTile, "Animation" : tagAnimationTile}
 
-    def update(self):
-        self.mEntityManager.update()
+    def update(self, updateOnPause):
+        self.mEntityManager.update(updateOnPause)
 
     def toScreenCoordinate(self,position):
         if(self.isometricMap):
