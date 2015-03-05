@@ -3,5 +3,8 @@ menuSong = "Heroic_Demise.ogg"
 
 
 #Level Audio
-levelSong = "No More Magic.mid"
+levelSong = "The-Eccentric-Wizard.ogg"
 newTowerSound = "BookClose.ogg"
+destructedTower = ""
+
+monsterDie = [] #Para orcs qualquer uma da pasta giant

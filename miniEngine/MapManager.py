@@ -65,8 +65,9 @@ class Map:
 
     def placeTile(self, i ,j, tag):
         t = self.createTile(tag)
-        t.setPosition(j * self.width + self.shiftX, i * self.height + self.shiftY)
         t.setCollisionBlock(Vec2d(self.width,self.height))
+        t.setPosition(j * self.width + self.shiftX, i * self.height + self.shiftY)
+        
         return t
 
     def placeIsometricTile(self, i, j, tag):

@@ -243,7 +243,7 @@ class City(Tile):
         self.hp.addToEntityManager()
         self.hp.setAnimation("TowerHealthBarStart", "TowerHealthBarEnd", "TowerHealthBarMiddle")
         self.rBoundingCircle = 32
-        self.setCollisionBlock(Vec2d(tileWidth,tileHeigth))
+        self.setCollisionBlock(Vec2d(tileWidth *2,tileHeigth*2))
 
     def update(self):
         lMonsters = mE.mEntityManager.getTagEntitys("Monster")
@@ -256,6 +256,7 @@ class City(Tile):
     def setPosition(self,x,y):
         Tile.setPosition(self,x,y)
         self.hp.setPosition(self.position)
+        self.setCollisionBlock(Vec2d(tileWidth *2,tileHeigth*2))
 
 
     def die(self):

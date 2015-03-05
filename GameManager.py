@@ -47,6 +47,7 @@ class GameManager:
             #Towers
         mE.mAnimationManager.addAnimation(lImagesSlowTower[0], lImagesSlowTower[1], "SlowTower")
         mE.mAnimationManager.addAnimation(lImagesDamageTower[0], lImagesDamageTower[1], "HitTower")
+        mE.mAnimationManager.addAnimation(lImagesSlowTower[0], lImagesSlowTower[1], "PoisonTower")
 
         #Enemys Animation
         for mAni in lMonstersStats:
@@ -54,12 +55,17 @@ class GameManager:
             
         #UI
         mE.mAnimationManager.addAnimation(lImagesMouse[0],lImagesMouse[1], "Mouse")
+        mE.mAnimationManager.addAnimation(lImagesMouseHit[0],lImagesMouseHit[1], "MouseHit")
+        mE.mAnimationManager.addAnimation(lImagesMouseSlow[0],lImagesMouseSlow[1], "MouseSlow")
+        mE.mAnimationManager.addAnimation(lImagesMousePoison[0],lImagesMousePoison[1], "MousePoison")
+        
         mE.mAnimationManager.addAnimation(lImagesTabBar[0],lImagesTabBar[1], "TabBar")
         mE.mAnimationManager.addAnimation(lImagesBottomBar[0],lImagesBottomBar[1], "BottomBar")
 
             #Icons
         mE.mAnimationManager.addAnimation(lImagesSlowIcon[0], lImagesSlowIcon[1], "SlowIcon")
         mE.mAnimationManager.addAnimation(lImagesDamageIcon[0], lImagesDamageIcon[1], "DamageIcon")
+        mE.mAnimationManager.addAnimation(lImagesPoisonIcon[0], lImagesPoisonIcon[1], "PoisonIcon")
 
             #HealthBars Enemys
         mE.mAnimationManager.addAnimation(lImagesHPBarEnemyS[0], lImagesHPBarEnemyS[1], "EnemyHealthBarStart")
@@ -127,6 +133,11 @@ class GameManager:
         hitButton = self.mHUD.addCooldownButton(self.selectTower, "Hit", Vec2d(123 , 712), "DamageIcon", Vec2d(34,34))
         hitButton.cooldownBar.setPosition(Vec2d(130,751))
         self.icons["Hit"] = hitButton
+
+        #Create DamageIcon
+        poisonButton = self.mHUD.addCooldownButton(self.selectTower, "Poison", Vec2d(167 , 712), "PoisonIcon", Vec2d(34,34))
+        poisonButton.cooldownBar.setPosition(Vec2d(174,751))
+        self.icons["Poison"] = poisonButton
         
         #Add TabBar for tower stats
         self.tabBar = TabBar()
@@ -160,7 +171,12 @@ class GameManager:
         self.pauseUI.setPosition(500, 200)
         mE.mTextManager.addText(self.pauseUI,"PauseUI")
         mE.mTextManager.setTextFont("PauseUI", "None32")
-                
+
+        #Add a circle around the mouse
+        self.circle = Circle()
+        self.circle.color = (55,151,125)
+        mE.mPrimitiveManager.addPrimitive(self.circle, "MouseCircle")
+        
     def addTextTabBar(self, position, tag):
         t = Text()
         t.setPosition(position)
@@ -195,23 +211,19 @@ class GameManager:
         i = 0
         for m in mapFile:
             mMap = Map(tileWidth,tileHeigth, 0,0)
-            mMap.mAnimationManager.addAnimation(lImagesGrass[0],lImagesGrass[1],"0")
-            mMap.mAnimationManager.addAnimation(lImagesMountain[0],lImagesMountain[1],"1")
-            
-            mMap.mAnimationManager.addAnimation(lImagesPortal[0],lImagesPortal[1],"3")            
-            mMap.mAnimationManager.addAnimation(lImagesVillage[0],lImagesVillage[1],"4")
+            self.loadTileset(mMap)
+            mMap.createFactoryTile(Tile, {}, "Grass", "0")            
+            mMap.createFactoryTile(Portal, {"ParticleManager": mE.mParticleManager , "Waves": self.waves}, "Portal", "3")
+            mMap.createFactoryTile(City, {}, "City", "4")
 
-            #Trees  
-            mMap.mAnimationManager.addAnimation(lImagesTree0[0],lImagesTree0[1],"t")
+            mMap.createFactoryTile(Tile, {}, "Tree", "t")
+            mMap.createFactoryTile(Tile, {}, "TallGrass", "tg")
+            mMap.createFactoryTile(Tile, {}, "Rock", "r")
 
-
-            mMap.createFactoryTile(Tile, {}, "1", "1")
-            mMap.createFactoryTile(Tile, {}, "0", "0")
-            
-            mMap.createFactoryTile(Portal, {"ParticleManager": mE.mParticleManager , "Waves": self.waves}, "3", "3")
-            mMap.createFactoryTile(City, {}, "4", "4")
-
-            mMap.createFactoryTile(Tile, {}, "t", "t")
+            i = 0
+            for t in lImagesWater:
+                mMap.createFactoryTile(Tile,{},"Water"+str(i), "w"+str(i))
+                i+=1
 
             mMap.loadMap(m)
             mE.mMapManager.addMap(mMap, m)
@@ -237,10 +249,21 @@ class GameManager:
             mE.update()
             
             if(mE.keyboard.isPressed(pygame.K_ESCAPE)):
-                self.end = True
+                self.selectedTower = ""
+                mouse = self.mHUD.mouseEntity
+                mE.mAnimationManager.setEntityAnimation(mouse,"Mouse")
+                #self.end = True
 
-            if(self.selectedTower != "" and mE.mouse.isPressed("LEFT") and self.canPutTower()):
-                self.createTower(self.selectedTower, mE.mouse.getPosition())
+            if(self.selectedTower != "" and self.canPutTower()):
+                mousePosition = mE.mouse.getPosition()
+                self.circle.position = (mousePosition[0], mousePosition[1])
+                self.circle.radius = dicTowers[self.selectedTower]["Range"]
+                if(mE.mouse.isPressed("LEFT")):
+                    self.createTower(self.selectedTower, mousePosition)
+
+            else:
+                self.circle.position = (-2,-2)
+                self.circle.radius = (1)
 
             if(mE.keyboard.isPressed(pygame.K_UP) and  mE.pause):
                 self.pauseUI.content = ""
@@ -260,7 +283,7 @@ class GameManager:
 
     def canPutTower(self):
         mouse = self.mHUD.mouseEntity
-        lCollisionTowerMouse = mE.mMapManager.getCollisions(mouse, "t") + mE.mMapManager.getCollisions(mouse, "1") + mE.mEntityManager.collision("Mouse", "Tower")
+        lCollisionTowerMouse = mE.mMapManager.getCollisions(mouse, "t") + mE.mMapManager.getCollisions(mouse, "r") + mE.mEntityManager.collision("Mouse", "Tower") + mE.mMapManager.getCollisions(mouse, "4")
         if(not lCollisionTowerMouse and not self.icons[self.selectedTower].cooldownBar.isActive() ):
             return True
         return False
@@ -298,6 +321,7 @@ class GameManager:
             t.poison        = dicTowers[tag]["PoisonDamage"]
             t.damage        = dicTowers[tag]["HitDamage"]
             t.cooldownShoot = dicTowers[tag]["Cooldown"]
+            t.range         = dicTowers[tag]["Range"]
                     
             if(dicTowers[tag]["ChooseMethod"] != None):
                 t.chooseTargetMethod = dicTowers[tag]["ChooseMethod"]
@@ -321,6 +345,8 @@ class GameManager:
     
     def selectTower(self,params):
         self.selectedTower = params
+        mouse = self.mHUD.mouseEntity
+        mE.mAnimationManager.setEntityAnimation(mouse,"Mouse"+ params)
 
     def showTowerStats(self,params):
         tTowerType = mE.mTextManager.texts["TowerType"]
@@ -339,5 +365,25 @@ class GameManager:
         tTowerCost.content = "Cost: "+ str(dicTowers[params]["Cost"])
         
         self.tabBar.appear()
+
+    def loadTileset(self, mMap):
+            mMap.mAnimationManager.addAnimation(lImagesGrass[0],lImagesGrass[1],"Grass")          
+            mMap.mAnimationManager.addAnimation(lImagesPortal[0],lImagesPortal[1],"Portal")            
+            mMap.mAnimationManager.addAnimation(lImagesVillage[0],lImagesVillage[1],"City")
+
+            #Trees  
+            mMap.mAnimationManager.addAnimation(lImagesTree0[0],lImagesTree0[1],"Tree")
+            mMap.mAnimationManager.addAnimation(lImagesTallGrass[0],lImagesTallGrass[1],"TallGrass")
+            mMap.mAnimationManager.addAnimation(lImagesRock[0],lImagesRock[1],"Rock")
+
+            #Water
+            i = 0
+            for t in lImagesWater:
+                mMap.mAnimationManager.addAnimation(t[0],t[1],"Water"+str(i))
+                i+=1
+            #Brigde
+            i = 0
+            for t in lImagesBrigde:
+                mMap.mAnimationManager.addAnimation(t[0],t[1],"Brigde"+str(i))
+                i+=1
             
-        

@@ -137,7 +137,7 @@ class Renderer:
 
         for lc in lcircles:
             for c in lc:
-                pygame.draw.circle(self.screen,c.color,c.position, c.radius)
+                pygame.draw.circle(self.screen,c.color,c.position, c.radius, 1)
 
         for le in lellipses:
             for e in le:

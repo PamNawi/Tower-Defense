@@ -22,7 +22,8 @@ def slow(tower,target):
     #print target.speed * target.maxSpeed;
 
 def poison(tower,target):
-    target.poison = 10
+    slow(tower,target)
+    #target.poison = 10
     pass
 
 def chooseTargetWithoutSpeedModification(tower):
@@ -88,10 +89,16 @@ class SlowProjectile(Projectile):
 dicTowers = {}
 dicTowers["Hit"] = {"ChooseMethod" : None , "Cost" : 10,
                     "Slow" : 1, "PoisonDamage": 0, "HitDamage": 3,
-                    "HP" : 15, "Effect": hit, "Cooldown": 1.0}
+                    "HP" : 15, "Effect": hit, "Cooldown": 1.0, "Range": 100}
 
 dicTowers["Slow"] = {"ChooseMethod" : chooseTargetWithoutSpeedModification,
                      "Cost" : 10,
                      "Slow" : 0.5, "PoisonDamage": 0, "HitDamage": 0.0,
-                     "HP": 15, "Effect": slow, "Cooldown": 2.0}
+                     "HP": 15, "Effect": slow, "Cooldown": 2.0, "Range":100}
+
+
+dicTowers["Poison"] = {"ChooseMethod" : chooseTargetWithoutSpeedModification,
+                     "Cost" : 10,
+                     "Slow" : 0.0, "PoisonDamage": 1, "HitDamage": 0.0,
+                     "HP": 15, "Effect": poison, "Cooldown": 2.0, "Range":100}
 

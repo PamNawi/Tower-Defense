@@ -1,4 +1,4 @@
-walkable = ["0","3","4"]
+walkable = ["0","3","4", "tg"]
 tileWidth   = 50
 tileHeigth  = 50
 
