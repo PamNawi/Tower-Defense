@@ -14,10 +14,15 @@ class Portal(Tile):
         
         self.nextParticle = -1
         self.mParticleManager.addUpdateFunction(lImagesPortalParticle[0],lImagesPortalParticle[1] , spin, "spin")
-        self.lastSummon = mE.mGlobalVariables["GameTime"]
+        self.lastSummon = mE.getGameTime()
 
         self.actualWave = 0
         self.newWave()
+        
+        tText = mE.mEntityManager.getTagEntitys("TwinkleText")[0]
+        tText.content = "- Sharpen the arrows -"
+        self.gonnaSpawn = True
+        self.monsters = []
 
     def update(self):
         if(self.nextParticle < 0):
@@ -32,25 +37,45 @@ class Portal(Tile):
             self.nextParticle = random.random() * 50
         self.nextParticle += -1
 
-        if(mE.mGlobalVariables["GameTime"] - self.lastSummon >= 1.0):
-            self.lastSummon = mE.mGlobalVariables["GameTime"]
+        if(mE.getGameTime()- self.lastSummon >= 1.0):
             self.summonNextMonster()
         
     def newWave(self):
-        self.monsters = []
-        tMonster = 0
-        for i in self.waves[self.actualWave]:
-            self.monsters += [ lMonstersStats[tMonster]] *i #["EntityTag"] ] *i
-            tMonster += 1
-        self.actualWave += 1
+        if(len(self.waves) - 1 < self.actualWave):
+            self.gonnaSpawn = False
+            print "No more tears"
+            return
+        
+        elif(mE.mEntityManager.getTagEntitys("Monster") == []):
+            diffLastSummon = mE.getGameTime() - self.lastSummon
+            tText = mE.mEntityManager.getTagEntitys("TwinkleText")[0]
+            tText.content = "- Brace yourself -"
+            tText.startTwinkle(1)
+            if(diffLastSummon > 5.0):
+                self.monsters = []
+                tMonster = 0
+                for i in self.waves[self.actualWave]:
+                    self.monsters += [ lMonstersStats[tMonster]] *i #["EntityTag"] ] *i
+                    tMonster += 1
+                self.actualWave += 1
+                self.lastSummon = mE.getGameTime() + 3.0
+                
 
     def summonNextMonster(self):
         #print "New Monster"
         #print self.monsters
         if(self.monsters):
+            mE.mJukebox.PlaySound("Teleport")
             statsMonster = random.choice(self.monsters)
             self.monsters.remove(statsMonster)
             self.createMonster(statsMonster)
+            self.lastSummon = mE.getGameTime()
+
+            tText = mE.mEntityManager.getTagEntitys("TwinkleText")[0]
+            tText.stopTwinkle()
+        else:
+            self.newWave()
+    
 
     
     def createMonster(self,statsMonster):
@@ -72,6 +97,9 @@ class Portal(Tile):
         m.setRadiusBoundingCircle(10)
         m.setCollisionBlock(Vec2d(32,32))
         return m
+
+    def gonnaSpawnMore(self):
+        return self.gonnaSpawn
 
 class Monster(Entity):
     def __init__(self):
@@ -98,6 +126,7 @@ class Monster(Entity):
 
     def takeDamage(self, damage):
         self.hp.takeDamage(damage)
+        mE.mJukebox.PlaySound("Damage")
 
     def move(self):
         if(self.lPositions):

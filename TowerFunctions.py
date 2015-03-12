@@ -19,6 +19,7 @@ def slow(tower,target):
     projectile.setCollisionBlock(Vec2d(10,10))
     projectile.setPosition(tower.position)
     chooseTargetWithoutSpeedModification(tower)
+    mE.mJukebox.PlaySound("Magic")
     #print target.speed * target.maxSpeed;
 
 def poison(tower,target):
@@ -34,12 +35,18 @@ def chooseTargetWithoutSpeedModification(tower):
             if (distanceEntity(tower, m) < tower.range and m.speed >= 1):
                 tower.target = m
                 return;
-def explode(projetile):
-    pass
+            
+def explode(projectile):
+    nParticles = int(random.random() * 50)
+    #print projectile.position
+    for i in range(0, nParticles):
+        v = Vec2d(random.random() * 10 - 5, random.random() * 10 - 5)
+        projectile.mParticleManager.createParticle(projectile.position, "commonExplosion", {"Dispersion": random.random() * 25, "Velocity": v})
 
 class Projectile(SteeringEntity):
     def __init__(self,target):
         SteeringEntity.__init__(self)
+        self.mParticleManager  = mE.mParticleManager
         self.ePursuit = target
 
     def sumForces(self):
@@ -64,12 +71,12 @@ class Projectile(SteeringEntity):
         pass
 
     def destructionEffect(self):
+        explode(self)
         mE.mEntityManager.removeEntity(self, "Projectil")
 
 class SlowProjectile(Projectile):
     def __init__(self,target):
         Projectile.__init__(self,target)
-        self.mParticleManager  = mE.mParticleManager
         self.nextParticle = -1
                 
 
@@ -84,7 +91,11 @@ class SlowProjectile(Projectile):
 
     def destructionEffect(self):
         mE.mEntityManager.removeEntity(self,"Projectil")
-        explode(self)
+        nParticles = int(random.random() * 50)
+        #print projectile.position
+        for i in range(0, nParticles):
+            v = Vec2d(random.random() * 10 - 5, random.random() * 10 - 5)
+            self.mParticleManager.createParticle(self.position, "slowExplosion", {"Dispersion": random.random() * 25, "Velocity": v})
 
 dicTowers = {}
 dicTowers["Hit"] = {"ChooseMethod" : None , "Cost" : 10,

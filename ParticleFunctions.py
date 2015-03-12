@@ -39,8 +39,17 @@ def cascate(dicParams):
     
     p.setPosition(p.position.x,p.position.y+ velocity)
 
-    
     dicParams["Dispersion"] += -1
     if(dicParams["Dispersion"] <= 0):
         p.disposable = True
     return dicParams
+	
+def explosion(dicParams):
+	p		= dicParams["Particle"]
+	velocity	= dicParams["Velocity"]
+	
+	p.setPosition(p.position.x+ velocity.x,p.position.y + velocity.y)
+	dicParams["Dispersion"] += -1
+	if(dicParams["Dispersion"] <= 0):
+		p.disposable = True
+	return dicParams

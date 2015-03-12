@@ -34,10 +34,18 @@ class GameManager:
 
     def loadParticles(self):
         mE.mParticleManager.addUpdateFunction(lImagesPortalParticle[0], lImagesPortalParticle[1], cascate , "cascate")
+        mE.mParticleManager.addUpdateFunction(lImagesCommonExplosion[0], lImagesCommonExplosion[1], explosion , "commonExplosion")
+        mE.mParticleManager.addUpdateFunction(lImagesPortalParticle[0], lImagesPortalParticle[1], explosion , "slowExplosion")
         
     def loadSounds(self):
         mE.mJukebox.LoadSong(levelSong, "LevelSong")
         mE.mJukebox.LoadSound(newTowerSound, "NewTower")
+
+        
+        mE.mJukebox.LoadSound(error, "Error")
+        mE.mJukebox.LoadSound(damage, "Damage")
+        mE.mJukebox.LoadSound(magic, "Magic")
+        mE.mJukebox.LoadSound(teleport, "Teleport")
         
 
     def loadAnimations(self):
@@ -47,7 +55,7 @@ class GameManager:
             #Towers
         mE.mAnimationManager.addAnimation(lImagesSlowTower[0], lImagesSlowTower[1], "SlowTower")
         mE.mAnimationManager.addAnimation(lImagesDamageTower[0], lImagesDamageTower[1], "HitTower")
-        mE.mAnimationManager.addAnimation(lImagesSlowTower[0], lImagesSlowTower[1], "PoisonTower")
+        mE.mAnimationManager.addAnimation(lImagesPoisonTower[0], lImagesPoisonTower[1], "PoisonTower")
 
         #Enemys Animation
         for mAni in lMonstersStats:
@@ -61,6 +69,7 @@ class GameManager:
         
         mE.mAnimationManager.addAnimation(lImagesTabBar[0],lImagesTabBar[1], "TabBar")
         mE.mAnimationManager.addAnimation(lImagesBottomBar[0],lImagesBottomBar[1], "BottomBar")
+        mE.mAnimationManager.addAnimation(lImagesMoneyBar [0],lImagesMoneyBar[1], "MoneyUIBar")
 
             #Icons
         mE.mAnimationManager.addAnimation(lImagesSlowIcon[0], lImagesSlowIcon[1], "SlowIcon")
@@ -116,12 +125,16 @@ class GameManager:
     def loadUI(self):
         self.mHUD.loadEntitys()
 
+        #Load the fonts
+        mE.mTextManager.addFont(pygame.font.Font(None,16), "None14")
+        mE.mTextManager.addFont(pygame.font.Font(None,20), "None20")
+        mE.mTextManager.addFont(pygame.font.Font(None,28), "None32")
+        
         #Create the bottomBar
         bottomBar = Entity()
         mE.mEntityManager.addEntity(bottomBar,"BottomBar","UI")
         mE.mAnimationManager.setEntityAnimation(bottomBar, "BottomBar")
         bottomBar.setPosition(50 ,686)
-
         self.icons = {}
 
         #Create the SlowIcon
@@ -148,8 +161,6 @@ class GameManager:
         self.mHUD.addTabBar(self.tabBar, "Info")
 
         #Create the texts for tower stats
-        font = pygame.font.Font(None,16)
-        mE.mTextManager.addFont(font, "None14")
 
         self.addTextTabBar((tabBarPos[0] + 40,87),"TowerStats")
         mE.mTextManager.texts["TowerStats"].content = "Tower Stats"
@@ -160,13 +171,6 @@ class GameManager:
         self.addTextTabBar((tabBarPos[0] +10,180),"TowerCooldown")
         self.addTextTabBar((tabBarPos[0] +10,200),"TowerCost")
 
-        #Add texts to HUD
-        self.moneyUI = Text()
-        self.mHUD.addText(self.moneyUI, "Money", "None14", "MoneyUI")
-
-        font = pygame.font.Font(None,32)
-        mE.mTextManager.addFont(font, "None32")
-
         self.pauseUI = Text()
         self.pauseUI.setPosition(500, 200)
         mE.mTextManager.addText(self.pauseUI,"PauseUI")
@@ -176,9 +180,30 @@ class GameManager:
         self.circle = Circle()
         self.circle.color = (55,151,125)
         mE.mPrimitiveManager.addPrimitive(self.circle, "MouseCircle")
+
+        #Add the Twinkle little text
+        self.tText = createTwinkleText("- Shapen the arrows - ","None32")
+        self.tText.startTwinkle()
+        self.tText.setPosition(400,200)
+
+        mE.mEntityManager.addEntity(self.tText, "TwinkleText")
+
+        #Add the money ui bar
+        moneyBar = Entity()
+        mE.mEntityManager.addEntity(moneyBar,"MoneyUIBar","UI")
+        mE.mAnimationManager.setEntityAnimation(moneyBar, "MoneyUIBar")
+        moneyBar.setPosition(424,710)
+
+        #Add texts to HUD
+        self.moneyUI = Text()
+        self.moneyUI.color = (255,255,255)
+        self.mHUD.addText(self.moneyUI, "Money", "None32", "MoneyUI")
+        self.moneyUI.setPosition(470, 725)
+
         
     def addTextTabBar(self, position, tag):
         t = Text()
+        t.color = (255,255,255)
         t.setPosition(position)
         self.tabBar.addEntity(t)
         mE.mTextManager.addText(t,tag)
@@ -272,11 +297,13 @@ class GameManager:
                 self.pauseUI.content = "PAUSE"
                 mE.pauseGame()
 
-            if(mE.mGlobalVariables["EndGame"]):
+            if(self.isOver()):
                 print "Game Over"
-                break
-
+                
             self.showInfo()
+            self.addTimeCash()
+
+            #print self.tText.text.content
 
             self.mHUD.update()
             mE.render()
@@ -296,6 +323,10 @@ class GameManager:
 
         else:
             self.tabBar.disappear()
+
+    def addTimeCash(self):
+        pass
+    
     def createTower(self,tag,position = Vec2d(0,0)):
         global mE
         global dicTowers
@@ -335,6 +366,7 @@ class GameManager:
 
             #Start iconCooldown
             self.icons[self.selectedTower].activeCooldown()
+            mE.mJukebox.PlaySound("NewTower")
             return t
 
     def recalculateRouteAllMonsters(self):
@@ -386,4 +418,20 @@ class GameManager:
             for t in lImagesBrigde:
                 mMap.mAnimationManager.addAnimation(t[0],t[1],"Brigde"+str(i))
                 i+=1
+
+    def isOver(self):
+        #if there is no monster alive
+        monster = mE.mEntityManager.getTagEntitys("Monster")
+        #if there is no monster to spawn
+        pTile = self.portalTiles[0][1][0]
+        if(not pTile.gonnaSpawnMore() and monster == []):
+            return True
+        #the player wins
+
+        #if the city has no more hp
+        #the player loose
+
+        return False
+    def saveGame(self):
+        pass
             

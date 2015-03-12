@@ -46,6 +46,19 @@ class HUD:
         b.setCollisionBlock(vecCollision)
 
         addBarToEntityManager(b.cooldownBar)
+        return b
+
+    def addStageButton(self, bFunction, bParams, bPosition, bTagAnimation, vecCollision, beated):
+        global mE
+        b = Stage()
+        mE.mEntityManager.addEntity(b,"Button")
+        mE.mAnimationManager.setEntityAnimation(b, bTagAnimation)
+        b.setRadiusBoundingCircle(5)
+        b.setPosition(bPosition)
+        b.function = bFunction
+        b.params = bParams
+        b.setCollisionBlock(vecCollision)
+        b.beated = beated
 
         return b
 
@@ -111,7 +124,23 @@ class CooldownButton(Button):
         self.cooldownBar.update()
 
     def activeCooldown(self):
-        self.cooldownBar.activeCooldown()
+        self.cooldownBar.activeCooldown()            
+
+class Stage(Button):
+    def __init__(self):
+        Button.__init__(self)
+        self.id = 0
+        self.lNextStages = []
+        self.beated = False
+        
+    def startFunction(self):
+        if(self.beated != 0):
+            if(self.params != None):
+                self.function(self.params)
+            else:
+                self.function()
+
+
 
 class TabBar(Entity):
     def __init__(self):
@@ -189,3 +218,57 @@ class TabBar(Entity):
 
         else:
             self.vecMaxDesloc = Vec2d(x,y)
+
+class TwinkleText(Entity):
+    def __init__(self):
+        Entity.__init__(self)
+        self.text = Text()
+
+
+        self.content= ""
+        self.lastTwinkle = mE.getGameTime()
+        self.twinkleCooldown = 1.0
+
+        self.active = True
+
+        self.on = True
+        self.nTwinkles = 3
+        
+    def update(self):
+        if(self.nTwinkles < 0 ):
+            self.stopTwinkle()
+            
+        if(self.active):
+            diffLastTwinkle = mE.getGameTime() - self.lastTwinkle
+            if(diffLastTwinkle >= self.twinkleCooldown):
+                if(self.on):
+                    self.text.content = self.content
+                    self.nTwinkles += -1
+                else:
+                    self.text.content = ""
+                self.on = not self.on
+                self.lastTwinkle = mE.getGameTime()
+
+    def stopTwinkle(self):
+        self.active = False
+        self.text.content = ""
+
+    def startTwinkle(self, nTwinkles = 3):
+        self.nTwinkles = nTwinkles
+        self.active = True
+
+    def setPosition(self, x, y = None):
+        Entity.setPosition(self,x,y)
+
+        self.text.setPosition(x,y)
+
+
+def createTwinkleText(textContent, fontTag):
+        tt = TwinkleText()
+        tt.content = textContent
+
+        mE.mTextManager.addText(tt.text,"TwinkleText")
+        mE.mTextManager.setTextFont("TwinkleText", fontTag)
+
+        return tt
+        

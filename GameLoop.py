@@ -19,14 +19,16 @@ class Game:
         global PortalGraph
         mE.pushState()
 
-        #self.mStageSelection.load()
-        #self.mStageSelection.update()
-        self.mGameManager.load()
-        self.mGameManager.gameLoop()
+        self.mStageSelection.load()
+        self.mStageSelection.update()
+        #self.mGameManager.load()
+        #self.mGameManager.gameLoop()
 
         mE.popState()
 
     def loadMenuAnimations(self):
+
+        mE.mAnimationManager.addAnimation(lImagesSplashScreen[0],lImagesSplashScreen[1],"SplashScreen")
         mE.mAnimationManager.addAnimation(lImagesBackground[0],lImagesBackground[1],"Background")  
         mE.mAnimationManager.addAnimation(lImagesPlayButton[0],lImagesPlayButton[1],"PlayButton")
         mE.mAnimationManager.addAnimation(lImagesOptionsButton[0],lImagesOptionsButton[1],"OptionsButton")
@@ -38,12 +40,17 @@ class Game:
 
     def loadMenuSounds(self):
         mE.mJukebox.LoadSong(menuSong, "MenuSong")
+        mE.mJukebox.LoadSound(bubbleSound, "BubbleSound")
 
     def menuLoop(self):
         global mE
         mE.cleanEntitys()
         self.loadMenuAnimations()
         self.loadMenuSounds()
+
+        self.splash = Entity()
+        mE.mEntityManager.addEntity(self.splash, "SplashScreen", "SplashScreen")
+        mE.mAnimationManager.setEntityAnimation(self.splash, "SplashScreen")
         
         self.mHud = HUD()
         self.background = Entity()
@@ -58,12 +65,17 @@ class Game:
         mE.mAnimationManager.addAnimation(lImagesHPBarEnemyE[0], lImagesHPBarEnemyE[1], "CooldownBarEnd")
         mE.mAnimationManager.addAnimation(lImagesHPBarEnemyM[0], lImagesHPBarEnemyM[1], "CooldownBarMiddle")
 
-        mE.mEntityManager.defineLayerOrder(["BG"])
+        mE.mEntityManager.defineLayerOrder(["Splash","BG"])
 
         mE.mJukebox.PlaySong("MenuSong")
+        mE.mJukebox.PlaySound("BubbleSound")
+        tIniLoop = mE.getGameTime()
         
         while not self.end:
             mE.update()
+            if(mE.getGameTime() - tIniLoop >= 3.0 and self.splash != None):
+                mE.mEntityManager.removeEntity(self.splash, "SplashScreen")
+                self.splash = None
             self.mHud.update()
             mE.render()
         print "Acabou"
