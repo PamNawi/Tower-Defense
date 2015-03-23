@@ -20,6 +20,7 @@ class GameManager:
         self.selectedTower = ""
 
         mE.updateOnPause = ["Mouse", "Button","InfoTabBar"]
+        self.playerWins = True
         pass
 
     def load(self):
@@ -33,33 +34,47 @@ class GameManager:
         self.loadParticles()
 
     def loadParticles(self):
-        mE.mParticleManager.addUpdateFunction(lImagesPortalParticle[0], lImagesPortalParticle[1], cascate , "cascate")
+        mE.mParticleManager.addUpdateFunction(lImagesSlowParticle[0],    lImagesSlowParticle[1], cascate , "cascate")
+        #Explosions
         mE.mParticleManager.addUpdateFunction(lImagesCommonExplosion[0], lImagesCommonExplosion[1], explosion , "commonExplosion")
-        mE.mParticleManager.addUpdateFunction(lImagesPortalParticle[0], lImagesPortalParticle[1], explosion , "slowExplosion")
+        mE.mParticleManager.addUpdateFunction(lImagesSlowParticle[0],  lImagesSlowParticle[1], explosion , "slowExplosion")
+        mE.mParticleManager.addUpdateFunction(lImagesPoisonParticle[0],  lImagesPoisonParticle[1], explosion , "poisonExplosion")
+        mE.mParticleManager.addUpdateFunction(lImagesFarmParticle[0],  lImagesFarmParticle[1], explosion , "farmExplosion")
         
     def loadSounds(self):
         mE.mJukebox.LoadSong(levelSong, "LevelSong")
         mE.mJukebox.LoadSound(newTowerSound, "NewTower")
 
-        
         mE.mJukebox.LoadSound(error, "Error")
         mE.mJukebox.LoadSound(damage, "Damage")
         mE.mJukebox.LoadSound(magic, "Magic")
         mE.mJukebox.LoadSound(teleport, "Teleport")
+        mE.mJukebox.LoadSound(coming, "MonstersComing")
+        mE.mJukebox.LoadSound(heart, "Heart")
+
+        for monsterSound in lMonstersSounds:
+            mE.mJukebox.LoadSound(monsterSound[0], monsterSound[1])
         
 
     def loadAnimations(self):
         #Especial Tiles Animations
         mE.mAnimationManager.addAnimation(lImagesPortal[0], lImagesPortal[1], "Portal")
         mE.mAnimationManager.addAnimation(lImagesVillage[0], lImagesVillage[1], "Village")
+        
             #Towers
         mE.mAnimationManager.addAnimation(lImagesSlowTower[0], lImagesSlowTower[1], "SlowTower")
         mE.mAnimationManager.addAnimation(lImagesDamageTower[0], lImagesDamageTower[1], "HitTower")
         mE.mAnimationManager.addAnimation(lImagesPoisonTower[0], lImagesPoisonTower[1], "PoisonTower")
+        mE.mAnimationManager.addAnimation(lImagesFarmTower[0], lImagesFarmTower[1], "FarmTower")
 
         #Enemys Animation
         for mAni in lMonstersStats:
-            mE.mAnimationManager.addAnimation(mAni["Animation"][0], mAni["Animation"][1], mAni["AnimationTag"])
+            mE.mAnimationManager.addAnimation(mAni["Animation"]["Up"][0], mAni["Animation"]["Up"][1], mAni["AnimationTag"]+"Up")
+            mE.mAnimationManager.addAnimation(mAni["Animation"]["Down"][0], mAni["Animation"]["Down"][1], mAni["AnimationTag"]+"Down")
+            mE.mAnimationManager.addAnimation(mAni["Animation"]["Left"][0], mAni["Animation"]["Left"][1], mAni["AnimationTag"]+"Left")
+            mE.mAnimationManager.addAnimation(mAni["Animation"]["Right"][0], mAni["Animation"]["Right"][1], mAni["AnimationTag"]+"Right")
+
+        mE.mAnimationManager.addAnimation(lImagesTombstone[0],lImagesTombstone[1], "Tombstone")
             
         #UI
         mE.mAnimationManager.addAnimation(lImagesMouse[0],lImagesMouse[1], "Mouse")
@@ -75,6 +90,7 @@ class GameManager:
         mE.mAnimationManager.addAnimation(lImagesSlowIcon[0], lImagesSlowIcon[1], "SlowIcon")
         mE.mAnimationManager.addAnimation(lImagesDamageIcon[0], lImagesDamageIcon[1], "DamageIcon")
         mE.mAnimationManager.addAnimation(lImagesPoisonIcon[0], lImagesPoisonIcon[1], "PoisonIcon")
+        mE.mAnimationManager.addAnimation(lImagesFarmIcon[0], lImagesFarmIcon[1], "FarmIcon")
 
             #HealthBars Enemys
         mE.mAnimationManager.addAnimation(lImagesHPBarEnemyS[0], lImagesHPBarEnemyS[1], "EnemyHealthBarStart")
@@ -92,12 +108,21 @@ class GameManager:
         mE.mAnimationManager.addAnimation(lImagesHPBarTowerE[0], lImagesHPBarTowerE[1], "CooldownBarEnd")
         mE.mAnimationManager.addAnimation(lImagesHPBarTowerM[0], lImagesHPBarTowerM[1], "CooldownBarMiddle")
 
+            #ProgressBar
+        mE.mAnimationManager.addAnimation(lImagesProgressStart[0], lImagesProgressStart[1], "ProgressBarStart")
+        mE.mAnimationManager.addAnimation(lImagesProgressMiddle[0], lImagesProgressMiddle[1], "ProgressBarMiddle")
+        mE.mAnimationManager.addAnimation(lImagesProgressEnd[0], lImagesProgressEnd[1], "ProgressBarEnd")
+        mE.mAnimationManager.addAnimation(lImagesProgressBarMF[0], lImagesProgressBarMF[1], "ProgressBarMF")
+        mE.mAnimationManager.addAnimation(lImagesProgressBarEF[0], lImagesProgressBarEF[1], "ProgressBarEF")
+
             #Projectiles
         mE.mAnimationManager.addAnimation(lImagesSimpleProjectil[0],lImagesSimpleProjectil[1], "SimpleProjectil")
-        mE.mAnimationManager.addAnimation(lImagesSlowProjectil[0],lImagesSlowProjectil[1], "SlowProjectil")                          
+        mE.mAnimationManager.addAnimation(lImagesSlowProjectil[0],lImagesSlowProjectil[1], "SlowProjectil")   
+        mE.mAnimationManager.addAnimation(lImagesPoisonProjectil[0],lImagesPoisonProjectil[1], "PoisonProjectil")     
+        mE.mAnimationManager.addAnimation(lImagesFarmProjectil[0],lImagesFarmProjectil[1], "FarmProjectil")                          
 
             #HealthBar City
-        mE.mEntityManager.defineLayerOrder(["Towers", "Monsters", "UI"])
+        mE.mEntityManager.defineLayerOrder(["Tombstone","Towers", "Monsters", "BackUI", "UI"])
         
     def setPortalCoordinates(self):
         self.portalTiles = mE.mMapManager.getTiles("3")
@@ -147,10 +172,15 @@ class GameManager:
         hitButton.cooldownBar.setPosition(Vec2d(130,751))
         self.icons["Hit"] = hitButton
 
-        #Create DamageIcon
+        #Create PoisonIcon
         poisonButton = self.mHUD.addCooldownButton(self.selectTower, "Poison", Vec2d(167 , 712), "PoisonIcon", Vec2d(34,34))
         poisonButton.cooldownBar.setPosition(Vec2d(174,751))
         self.icons["Poison"] = poisonButton
+
+        #Create PoisonIcon
+        farmButton = self.mHUD.addCooldownButton(self.selectTower, "Farm", Vec2d(211, 712), "FarmIcon", Vec2d(34,34))
+        farmButton.cooldownBar.setPosition(Vec2d(218,751))
+        self.icons["Farm"] = farmButton
         
         #Add TabBar for tower stats
         self.tabBar = TabBar()
@@ -244,10 +274,16 @@ class GameManager:
             mMap.createFactoryTile(Tile, {}, "Tree", "t")
             mMap.createFactoryTile(Tile, {}, "TallGrass", "tg")
             mMap.createFactoryTile(Tile, {}, "Rock", "r")
+            mMap.createFactoryTile(Tile, {}, "CuttedTree", "ct")
 
             i = 0
             for t in lImagesWater:
                 mMap.createFactoryTile(Tile,{},"Water"+str(i), "w"+str(i))
+                i+=1
+
+            i = 0
+            for t in lImagesWater:
+                mMap.createFactoryTile(Tile,{},"Brigde"+str(i), "b"+str(i))
                 i+=1
 
             mMap.loadMap(m)
@@ -298,6 +334,7 @@ class GameManager:
                 mE.pauseGame()
 
             if(self.isOver()):
+                break
                 print "Game Over"
                 
             self.showInfo()
@@ -368,6 +405,8 @@ class GameManager:
             self.icons[self.selectedTower].activeCooldown()
             mE.mJukebox.PlaySound("NewTower")
             return t
+        else:
+            print "Nao tem a grana porra!"
 
     def recalculateRouteAllMonsters(self):
         monsters = mE.mEntityManager.getTagEntitys("Monster")
@@ -407,6 +446,7 @@ class GameManager:
             mMap.mAnimationManager.addAnimation(lImagesTree0[0],lImagesTree0[1],"Tree")
             mMap.mAnimationManager.addAnimation(lImagesTallGrass[0],lImagesTallGrass[1],"TallGrass")
             mMap.mAnimationManager.addAnimation(lImagesRock[0],lImagesRock[1],"Rock")
+            mMap.mAnimationManager.addAnimation(lImagesCuttedTree[0],lImagesCuttedTree[1],"CuttedTree")
 
             #Water
             i = 0
@@ -425,11 +465,15 @@ class GameManager:
         #if there is no monster to spawn
         pTile = self.portalTiles[0][1][0]
         if(not pTile.gonnaSpawnMore() and monster == []):
+            #the player wins
+            self.playerWins = True
             return True
-        #the player wins
-
+        if(mE.mGlobalVariables["EndGame"]):
+            self.playersWins = False
+            return True
         #if the city has no more hp
         #the player loose
+        self.playerWins = False
 
         return False
     def saveGame(self):

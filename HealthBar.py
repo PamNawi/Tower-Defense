@@ -70,7 +70,7 @@ class CooldownBar(Bar):
                 i.setPosition(Vec2d(position[0]+desloc*self.wMiddle,position[1]))
                 desloc += 1
 
-            self.end.setPosition(position[0] + self.wMiddle * desloc, position[1])
+            self.end.setPosition(position[0] + self.wMiddle * desloc +1, position[1])
             for i in self.middle[cooldown:]:
                 i.setPosition(self.start.position)
 
@@ -82,5 +82,90 @@ class CooldownBar(Bar):
     def isActive(self):
         return self.active
 
-    
+class ProgressBar(Bar):
+    def __init__(self, totalMonsters = 100):
+        Bar.__init__(self, totalMonsters)
+
+        self.totalMonsters = totalMonsters
+        self.actualMonster = 0
+        self.tag = "LevelProgress"
+
+        for m in self.middle:
+            m.setPosition(self.position)
+
+        self.backStart = Entity()
+        self.backEnd = Entity()
+
+        self.backMiddle = []
+        for i in range(self.totalMonsters):
+            self.backMiddle += [ Entity()]
+
+        self.wMidle = 2
+        
+            
+    def summonNext(self):
+        if(self.actualMonster < self.totalMonsters):
+            self.actualMonster += 1
+            desloc = 1
+
+            for m in self.middle[self.actualMonster:]:
+                m.setPosition(Vec2d(self.position.x, self.position.y))
+            for m in self.middle[:self.actualMonster]:
+                m.setPosition(Vec2d(self.position.x+desloc *self.wMiddle, self.position.y))
+                desloc+=1
+
+            self.setFluidPosition()
+
+    def setFluidPosition(self):
+        self.start.setPosition(self.position + Vec2d(7,3))
+        for m in self.middle[self.actualMonster:]:
+            m.setPosition(Vec2d(self.position.x + 7, self.position.y + 3))
+        desloc = 1
+        for m in self.middle[:self.actualMonster]:
+            m.setPosition(Vec2d(self.position.x+ desloc * self.wMiddle + 7, self.position.y + 3))
+            desloc+=1
+
+        self.end.setPosition(self.position.x+self.wMiddle * desloc + 7, self.position.y +3 )
+
+    def setPosition(self,position):
+        Entity.setPosition(self,position)
+        self.setFluidPosition()
+        
+        self.start.setPosition(position + Vec2d(7,3))
+        for m in self.middle[self.actualMonster:]:
+            m.setPosition(Vec2d(self.position.x + 7, self.position.y + 3))
+        desloc = 1
+        for m in self.middle[:self.actualMonster]:
+            m.setPosition(Vec2d(self.position.x+desloc * self.wMiddle + 7, self.position.y + 3))
+            desloc+=1
+
+        self.end.setPosition(self.position.x+self.wMiddle * desloc + 7, self.position.y +3 )
+
+        self.backStart.setPosition(position )
+        desloc = 1
+        for m in self.backMiddle:
+            m.setPosition(Vec2d(self.position.x + desloc * self.wMiddle + 7, self.position.y ))
+            desloc +=1
+
+        self.backEnd.setPosition(self.position.x + desloc * self.wMiddle +7, self.position.y)
+
+
+    def setAnimation(self,startTag, endTag, middleTag, backStartTag, backEndTag, backMiddleTag):
+        Bar.setAnimation(self,startTag, endTag, middleTag)
+
+        mE.mAnimationManager.setEntityAnimation(self.backStart,backStartTag)
+        mE.mAnimationManager.setEntityAnimation(self.backEnd,backEndTag)
+        
+        for m in self.backMiddle:
+            mE.mAnimationManager.setEntityAnimation(m,backMiddleTag)
+
+    def addBarToEntityManager(self):
+        global mE
+        addBarToEntityManager(self)
+
+        mE.mEntityManager.addEntity(self.backStart, self.tag+"Back", "BackUI")
+        mE.mEntityManager.addEntity(self.backEnd, self.tag+"Back", "BackUI")
+
+        for m in self.backMiddle:
+            mE.mEntityManager.addEntity(m, self.tag+"Back", "BackUI")
     

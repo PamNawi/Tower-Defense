@@ -1,16 +1,16 @@
-t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t
-t	3	0	0	tg	tg	r	t	t	t	t	t	0	0	0	0	0	tg	0	0	t
-t	0	0	0	0	tg	tg	t	t	t	t	0	0	0	0	0	tg	tg	tg	0	t
-t	0	0	0	0	0	0	t	t	t	0	0	0	0	0	0	tg	r	tg	tg	t
-t	0	0	0	0	0	0	t	t	0	0	0	0	0	0	0	tg	tg	tg	0	t
-t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	tg	0	0	t
-t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	t	t	t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	t	t	t	t	t	0	0	0	r	0	0	0	0	0	0	0	0	0	0	t
-t	t	t	t	t	t	t	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	t	t	t	t	t	t	t	0	0	0	0	0	0	0	0	0	0	4		t
-t	t	t	t	t	t	t	t	t	0	0	0	0	0	0	0	0	0			t
-t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t
-t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t
+t	t	t	t	t	t	t	w3	w5	t	t	t	t	t	t	t	t	t	t	t	t
+t	t	t	t	tg	tg	r	w3	w5	t	t	t	t	t	t	0	0	0	4		t
+t	3	0	tg	tg	tg	tg	w3	w5	t	t	t	r	0	0	0	0	0			t
+t	0	0	0	0	tg	tg	w3	w5	t	t	0	0	0	0	0	0	0	0	t	t
+t	0	0	0	0	0	0	w3	w5	0	0	0	0	0	0	0	0	0	t	t	t
+t	0	0	ct	0	0	0	w3	w5	0	0	0	0	0	0	0	0	0	t	t	t
+t	0	0	0	0	0	0	w3	w5	0	0	0	0	0	0	0	0	0	t	t	t
+t	0	0	0	0	0	0	b0	b2	0	0	0	0	0	0	0	0	0	t	t	t
+t	t	0	0	0	0	0	b3	b5	0	0	0	0	0	0	0	0	0	0	t	t
+t	t	t	t	0	0	0	b11	b12	0	0	0	0	0	0	r	0	0	0	t	t
+t	t	t	t	t	t	0	w3	w5	0	0	0	0	0	0	0	0	0	0	t	t
+t	t	t	t	t	t	t	w3	w5	0	0	0	0	0	0	0	0	0	0	0	t
+t	t	t	t	t	t	t	w3	w11	w1	w1	w1	w1	w1	w1	w2	0	0	0	0	t
+t	t	t	t	t	t	w0	w12	w4	w4	w4	w4	w4	w4	w4	w5	0	0	0	0	t
+t	w0	w1	w1	w1	w1	w12	w4	w4	w4	w4	w4	w4	w4	w4	w11	w1	w1	w1	w1	w1
+w0	w12	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4

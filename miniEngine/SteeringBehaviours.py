@@ -34,7 +34,6 @@ class SteeringEntity(Entity):
         self.ePursuit = ePursuit
         self.eEvade = eEvade
 
-
         self.swarmForce = Vec2d(0.0,0.0)
 
     def update(self):
@@ -97,14 +96,14 @@ class SteeringEntity(Entity):
         return circleCenter + displacement
 
     def Pursuit(self, e2):
-        distance = e2.position - self.position
+        distance = e2.getCenterCollisionBlock() - self.getCenterCollisionBlock()
         updatesNeeded = distance.get_length() * (1/self.maxVelocity)
         tv = self.velocity
         tv = tv.normalized() * updatesNeeded
         return self.Seek(e2.position + tv)
 
     def Evade(self, e2):
-        distance = e2.position - self.position
+        distance = e2.getCenterCollisionBlock() - self.getCenterCollisionBlock()
         updatesNeeded = distance.get_length() * (1/self.maxVelocity)
         tv = self.velocity
         tv = tv.normalized() * updatesNeeded

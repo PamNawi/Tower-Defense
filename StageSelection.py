@@ -12,6 +12,8 @@ class StageSelection:
         self.mGameManager = GameManager()
         self.stages = {}
         self.mHUD = HUD()
+        self.gameOver = None
+        
         pass
 
     def load(self):
@@ -26,16 +28,21 @@ class StageSelection:
         mE.mEntityManager.addEntity(self.background,"Background", "BG")
         mE.mAnimationManager.setEntityAnimation(self.background, "Background")
 
-        mE.mEntityManager.defineLayerOrder(["BG"])
+        mE.mEntityManager.defineLayerOrder(["BG","UI","GameOverScreen"])
 
     def loadSounds(self):
         mE.mJukebox.LoadSong(worldMapSong, "WorldMap")
+        mE.mJukebox.LoadSong(worldMapSong, "Win")
+        mE.mJukebox.LoadSong(worldMapSong, "Lose")
         
     def loadAnimations(self):
         mE.mAnimationManager.addAnimation(lImagesBackgroundWM[0],lImagesBackgroundWM[1],"Background")
         mE.mAnimationManager.addAnimation(lImagesStageWM[0],lImagesStageWM[1],"Stage")
         mE.mAnimationManager.addAnimation(lImagesStageOpenedWM[0],lImagesStageOpenedWM[1],"StageOpened")
         mE.mAnimationManager.addAnimation(lImagesStageBeatedWM[0],lImagesStageBeatedWM[1],"StageBeated")
+
+        mE.mAnimationManager.addAnimation(lImagesGameOverWin[0],lImagesGameOverWin[1],"Win")
+        mE.mAnimationManager.addAnimation(lImagesGameOverLose[0],lImagesGameOverLose[1],"Lose")
 
     def loadStageGraph(self):
         stageGraph = ".//resources//StageSelection//Stages.txt"
@@ -49,14 +56,13 @@ class StageSelection:
         f.close()
             
     def update(self):
-        
         mE.mJukebox.PlaySong("WorldMap")
-        
+        self.end = False
         while not self.end:
             mE.update()
             self.mHUD.update()
-
-            if(mE.keyboard.isPressed(pygame.K_SPACE)):
+            
+            if(mE.keyboard.isPressed(pygame.K_ESCAPE)):
                 self.end = True
                 
             mE.render()
@@ -72,14 +78,69 @@ class StageSelection:
 
         mE.popState()
 
+        self.gameOver = Entity()
+        mE.mEntityManager.addEntity(self.gameOver, "GameOverScreen", "GameOverScreen")
+        
+        if(self.mGameManager.playerWins):
+            print "The player win!"
+            self.saveGame(idStage)
+            mE.mAnimationManager.setEntityAnimation(self.gameOver, "Win")
+        else:
+            print "The player loose!"
+            mE.mAnimationManager.setEntityAnimation(self.gameOver, "Lose")
+        
+        mE.mEntityManager.entitys["Button"] = []
+        self.loadSaveGame()
+        self.loadStageGraph()
+        self.gameOverScreenUpdate(self.mGameManager.playerWins)
+        self.update()
+
+    def gameOverScreenUpdate(self, win = True):
+        self.end = False
+        if(win):
+            mE.mJukebox.PlaySong("Win")
+        else:
+           mE.mJukebox.PlaySong("Lose")
+           
+        tIniLoop = mE.getGameTime()
+        while not self.end:
+            mE.update()
+            
+            if(mE.getGameTime() - tIniLoop >= 3.0  ):
+                self.end = True
+            if(mE.keyboard.isPressed(pygame.K_ESCAPE)):
+                self.end = True
+                
+            mE.render()
+        mE.mEntityManager.removeEntity(self.gameOver, "GameOverScreen")
+        self.gameOver = None
+
+    def saveGame(self, idStage):
+        self.beatenStages[str(idStage)] = 2
+        neighbors = self.stages[str(idStage)][1].split(",")
+        if(neighbors != ['']):
+            for neighbor in neighbors:
+                if(neighbor == ''):
+                    break
+                if(self.beatenStages[neighbor] == 0):
+                    self.beatenStages[neighbor] = 1
+
+        #Saving the game state
+        f =  open(".//resources//Saves//save.txt","w")
+        for stage in self.beatenStages:
+            f.write(str(stage) + "\t" + str(self.beatenStages[stage]) +"\n" )
+        f.close()
+
     def loadSaveGame(self):
         self.beatenStages = {}
         f = open(".//resources//Saves//save.txt")
         save  = f.read().split("\n")
 
         for s in save:
-            s = s.split("\t")
-            self.beatenStages[s[0]] = int(s[1])
+            if(s != ""):
+                s = s.split("\t")
+                self.beatenStages[s[0]] = int(s[1])
+        f.close()
 
     def createStage(self, idStage, positionWorldMap, lNextStages, beated):
         positionWorldMap = tuple( positionWorldMap.split(","))
@@ -91,5 +152,7 @@ class StageSelection:
             s = self.mHUD.addStageButton(self.startLevel, params, positionWorldMap, "StageBeated", Vec2d(64,64), beated)
         elif(beated == 1):
             s = self.mHUD.addStageButton(self.startLevel, params, positionWorldMap, "StageOpened", Vec2d(64,64), beated)
-        else:
+        elif(beated == 0):
             s = self.mHUD.addStageButton(self.startLevel, params, positionWorldMap, "Stage", Vec2d(64,64), beated)
+        else:
+            print "mah oi"

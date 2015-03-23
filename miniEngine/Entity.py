@@ -52,6 +52,10 @@ class Entity:
     def addCollisionBlock(self, cb):
         self.collisionList.append(cb)
 
+    def getCenterCollisionBlock(self):
+        return self.collisionBlock.getCenter()
+        
+
 def distanceEntity(e1, e2):
     return e1.position.get_distance(e2.position)
 

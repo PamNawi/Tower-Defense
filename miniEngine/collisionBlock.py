@@ -26,6 +26,10 @@ class CollisionBlock:
 	def collision(self, other):
 		return self.rect.colliderect(other.rect)
 
+	def getCenter(self):
+                center = self.rect.center
+                return Vec2d(center[0], center[1])
+
 class listCollisionBlock:
         def __init__(self):
                 self.collisionBlocks = {}

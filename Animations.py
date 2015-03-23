@@ -10,7 +10,7 @@ lImagesSplashScreen     = ([".//Resources//MainMenu//splashScreen.png"],1)
 lImagesPlayButton       = ([".//Resources//MainMenu//playerButton.png"],1)
 lImagesOptionsButton    = ([".//Resources//MainMenu//optionsButton.png"],1)
 lImagesQuitButton       = ([".//Resources//MainMenu//quitButton.png"],1)
-lImagesBackground       = ([".//Resources//MainMenu//background2.png"],1)
+lImagesBackground       = ([".//Resources//MainMenu//background3.png"],1)
 
 #UI
 lImagesButton       = ([".//Resources//UI//button.png"],1)
@@ -22,10 +22,18 @@ lImagesTabBar       = ([".//Resources//UI//bartab3.png"],1)
 lImagesBottomBar    = ([".//Resources//UI//bottomBar.png"],1)
 lImagesMoneyBar     = ([".//Resources//UI//moneyUIBar.png"],1)
 
+    #Progress Bar
+lImagesProgressStart    =([".//Resources//UI//progressBarStart.png"],1)
+lImagesProgressMiddle   =([".//Resources//UI//progressBarMiddle.png"],1)
+lImagesProgressEnd      =([".//Resources//UI//progressBarEnd.png"],1)
+lImagesProgressBarMF    =([".//Resources//UI//progressBarMiddleFluid.png"],1)
+lImagesProgressBarEF    =([".//Resources//UI//progressBarEndFluid.png"],1)
+
     #Icons
 lImagesSlowIcon     =([".//Resources//UI//slowTowerIcon.png"],1)
 lImagesDamageIcon   =([".//Resources//UI//damageTowerIcon.png"],1)
 lImagesPoisonIcon   =([".//Resources//UI//poisonTowerIcon.png"],1)
+lImagesFarmIcon   =([".//Resources//UI//FarmTowerIcon.png"],1)
 
     #HealthBars
 lImagesHPBarEnemyS = ([".//Resources//UI//eHealthBarStart.png"],1)
@@ -41,6 +49,9 @@ lImagesStageWM          = ([".//Resources//Tilesets//world//stage.png"],1)
 lImagesStageOpenedWM    = ([".//Resources//Tilesets//world//stageOpened.png"],1)
 lImagesStageBeatedWM    = ([".//Resources//Tilesets//world//stageBeated.png"],1)
 
+lImagesGameOverWin    = ([".//Resources//UI//youWin.png"],1)
+lImagesGameOverLose    = ([".//Resources//UI//youLose.png"],1)
+
     #Map Entitys
 lImagesGrass    = ([".//Resources//Tilesets//grass.png"],1)
 lImagesGraph    = ([".//Resources//Tilesets//grass.png"],1)
@@ -49,6 +60,7 @@ lImagesPortal = ([".//Resources//Tilesets//portal.png"],0.3)
 
         #Obstacles
 lImagesRock = ([".//Resources//Tilesets//rock.png"],1)
+lImagesCuttedTree = ([".//Resources//Tilesets//cuttedTree.png"],1)
 lImagesTree0 = ([".//Resources//Tilesets//tree.png"],1)
 lImagesTallGrass = ([".//Resources//Tilesets//tallgrass.png"],1)
 
@@ -64,10 +76,19 @@ lImagesPortalParticle = ([".//Resources//portalParticle.png",
 lImagesSlowTower = ([".//Resources//Towers//slowTower.png"],0.3)
 lImagesDamageTower = ([".//Resources//Towers//torreComum.png"],0.3)
 lImagesPoisonTower = ([".//Resources//Towers//poisonTower.png"],0.3)
+lImagesFarmTower = ([".//Resources//Towers//farmTower.png"],0.3)
 
 #Projectiles
 lImagesSimpleProjectil = ([".//Resources//Projectiles//normalProjectile.png"],1)
 lImagesSlowProjectil = ([".//Resources//Projectiles//slowProjectile.png"],1)
+lImagesPoisonProjectil = ([".//Resources//Projectiles//poisonProjectile.png"],1)
+lImagesFarmProjectil = ([".//Resources//Projectiles//farmProjectile.png"],1)
 
 #Projectiles Particles
 lImagesCommonExplosion = ([".//resources//Projectiles//normalProjectileExplosionParticle.png"],1)
+lImagesSlowParticle = ([".//resources//Projectiles//slowParticle.png",
+                        ".//resources//Projectiles//slowParticle2.png",
+                        ".//resources//Projectiles//slowParticle3.png"],0.3)
+
+lImagesPoisonParticle = ([".//resources//Projectiles//poisonParticle.png"],1)
+lImagesFarmParticle = ([".//resources//Projectiles//farmParticle.png"],1)

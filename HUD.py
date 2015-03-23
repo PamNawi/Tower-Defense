@@ -22,7 +22,7 @@ class HUD:
     def addButton(self, bFunction, bParams, bPosition, bTagAnimation, vecCollision):
         global mE
         b = Button()
-        mE.mEntityManager.addEntity(b,"Button")
+        mE.mEntityManager.addEntity(b,"Button","UI")
         mE.mAnimationManager.setEntityAnimation(b, bTagAnimation)
         b.setRadiusBoundingCircle(5)
         b.setPosition(bPosition)
@@ -51,7 +51,7 @@ class HUD:
     def addStageButton(self, bFunction, bParams, bPosition, bTagAnimation, vecCollision, beated):
         global mE
         b = Stage()
-        mE.mEntityManager.addEntity(b,"Button")
+        mE.mEntityManager.addEntity(b,"Button","UI")
         mE.mAnimationManager.setEntityAnimation(b, bTagAnimation)
         b.setRadiusBoundingCircle(5)
         b.setPosition(bPosition)

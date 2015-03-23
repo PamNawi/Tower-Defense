@@ -20,11 +20,11 @@ class Bar(Entity):
         Entity.setPosition(self,position)
         self.start.setPosition(position)
 
-        desloc = 0
+        desloc = 1
         for i in self.middle:
             i.setPosition(Vec2d(position[0]+desloc*self.wMiddle,position[1]))
             desloc += 1
-        desloc +=1
+        #desloc +=1
         self.end.setPosition(position[0] + self.wMiddle * desloc, position[1])
 
     def setAnimation(self, startTag, endTag, middleTag):

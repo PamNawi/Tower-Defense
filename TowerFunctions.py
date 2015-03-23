@@ -7,7 +7,7 @@ def hit(tower, target):
     mE.mAnimationManager.setEntityAnimation(projectile, "SimpleProjectil")
     projectile.tower = tower
     projectile.setCollisionBlock(Vec2d(10,10))
-    projectile.setPosition(tower.position)
+    projectile.setPosition(tower.position + Vec2d(25,25))
     
     #target.takeDamage(tower.damage)
 
@@ -17,24 +17,50 @@ def slow(tower,target):
     mE.mAnimationManager.setEntityAnimation(projectile, "SlowProjectil")
     projectile.tower = tower
     projectile.setCollisionBlock(Vec2d(10,10))
-    projectile.setPosition(tower.position)
+    projectile.setPosition(tower.position + Vec2d(25,25))
     chooseTargetWithoutSpeedModification(tower)
     mE.mJukebox.PlaySound("Magic")
     #print target.speed * target.maxSpeed;
 
 def poison(tower,target):
-    slow(tower,target)
-    #target.poison = 10
-    pass
+    projectile =  PoisonProjectile(target)
+    mE.mEntityManager.addEntity(projectile, "Projectil", "Monsters")
+    mE.mAnimationManager.setEntityAnimation(projectile, "PoisonProjectil")
+    projectile.tower = tower
+    projectile.setCollisionBlock(Vec2d(10,10))
+    projectile.setPosition(tower.position + Vec2d(25,25))
 
+def money(tower,target):
+    projectile =  GoldProjectile(target)
+    mE.mEntityManager.addEntity(projectile, "Projectil", "Monsters")
+    mE.mAnimationManager.setEntityAnimation(projectile, "FarmProjectil")
+    projectile.tower = tower
+    projectile.setCollisionBlock(Vec2d(10,10))
+    projectile.setPosition(tower.position + Vec2d(25,25))
+    
 def chooseTargetWithoutSpeedModification(tower):
-        monsters = mE.mEntityManager.getTagEntitys("Monster")
+    monsters = mE.mEntityManager.getTagEntitys("Monster")
 
-        tower.target = None
-        for m in monsters:
-            if (distanceEntity(tower, m) < tower.range and m.speed >= 1):
-                tower.target = m
-                return;
+    tower.target = None
+    for m in monsters:
+        if (distanceEntity(tower, m) < tower.range and m.speed >= 1):
+            tower.target = m
+            return
+
+def chooseTargetWithoutPoison(tower):
+    monsters = mE.mEntityManager.getTagEntitys("Monster")
+
+    tower.target = None
+    for m in monsters:
+        if (distanceEntity(tower, m) < tower.range and m.poison == 0):
+            tower.target = m
+            return
+
+def sendMoneyToCity(tower):
+    cityTiles = mE.mMapManager.getTiles("4")[0][1][0]
+    tower.target = cityTiles
+    return
+    
             
 def explode(projectile):
     nParticles = int(random.random() * 50)
@@ -66,6 +92,7 @@ class Projectile(SteeringEntity):
 
     def effect(self):
         self.ePursuit.takeDamage(self.tower.damage)
+        mE.mJukebox.PlaySound("Damage")
 
     def visualEffect(self):
         pass
@@ -97,6 +124,35 @@ class SlowProjectile(Projectile):
             v = Vec2d(random.random() * 10 - 5, random.random() * 10 - 5)
             self.mParticleManager.createParticle(self.position, "slowExplosion", {"Dispersion": random.random() * 25, "Velocity": v})
 
+class PoisonProjectile(Projectile):
+    def __init__(self,target):
+        Projectile.__init__(self,target)
+
+    def effect(self):
+        self.ePursuit.poison = 0.1
+
+    def destructionEffect(self):
+        mE.mEntityManager.removeEntity(self,"Projectil")
+        nParticles = int(random.random() * 50)
+        for i in range(0, nParticles):
+            v = Vec2d(random.random() * 10 - 5, random.random() * 10 - 5)
+            self.mParticleManager.createParticle(self.position, "poisonExplosion", {"Dispersion": random.random() * 25, "Velocity": v})
+
+class GoldProjectile(Projectile):
+    def __init__(self,target):
+        Projectile.__init__(self,target)
+
+    def effect(self):
+        mE.mGlobalVariables["Money"] += 1
+
+    def destructionEffect(self):
+        mE.mEntityManager.removeEntity(self,"Projectil")
+        nParticles = int(random.random() * 10)
+        for i in range(0, nParticles):
+            v = Vec2d(random.random() * 10 - 5, random.random() * 10 - 5)
+            self.mParticleManager.createParticle(self.position, "farmExplosion", {"Dispersion": random.random() * 25, "Velocity": v})
+        
+
 dicTowers = {}
 dicTowers["Hit"] = {"ChooseMethod" : None , "Cost" : 10,
                     "Slow" : 1, "PoisonDamage": 0, "HitDamage": 3,
@@ -108,8 +164,12 @@ dicTowers["Slow"] = {"ChooseMethod" : chooseTargetWithoutSpeedModification,
                      "HP": 15, "Effect": slow, "Cooldown": 2.0, "Range":100}
 
 
-dicTowers["Poison"] = {"ChooseMethod" : chooseTargetWithoutSpeedModification,
+dicTowers["Poison"] = {"ChooseMethod" : chooseTargetWithoutPoison,
                      "Cost" : 10,
                      "Slow" : 0.0, "PoisonDamage": 1, "HitDamage": 0.0,
                      "HP": 15, "Effect": poison, "Cooldown": 2.0, "Range":100}
 
+dicTowers["Farm"] = {"ChooseMethod" : sendMoneyToCity,
+                     "Cost" : 20,
+                     "Slow" : 0.0, "PoisonDamage": 0, "HitDamage": 0.0,
+                     "HP": 1, "Effect": money, "Cooldown": 5.0, "Range":100}

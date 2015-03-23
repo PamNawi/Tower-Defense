@@ -28,12 +28,13 @@ class Renderer:
         self.onScreen = []
         
         self.renderMaps(mMM)
+	self.renderAll()
+        self.renderPrimitives(mPrM)
         self.renderEntitys(mEM)
         self.renderParticles(mPM)
 
         self.depthSort()
         self.renderAll()
-        self.renderPrimitives(mPrM)
         self.renderTexts(mTexts)
 
         #self.renderCollisionBlocks(mEM)
@@ -117,6 +118,7 @@ class Renderer:
         for e in self.onScreen:
             if e.surface != None:
                 self.screen.blit(e.surface.getFrame(), (e.position[0], e.position[1]))
+		self.onScreen = []
 
 
     def renderPrimitives(self, mPM):
@@ -153,7 +155,7 @@ class Renderer:
         for ll in llines:
             for l in ll:
                 try:
-                    pygame.draw.lines(self.screen, l.color, l.closed, l.vertices)
+                    pygame.draw.lines(self.screen, l.color, l.closed, l.vertices , 2)
                 except:
                     pass
                 
@@ -234,6 +236,7 @@ class MiniEngine:
         self.mJukebox = Jukebox()
 
     def popState(self):
+        self.mJukebox.StopMusic()
         state = self.stateStack.pop()
 
         self.mEntityManager = state[0]
@@ -244,7 +247,6 @@ class MiniEngine:
         self.mMapManager = state[5]
         self.mParticleManager = state[6]
         self.mJukebox = state[7]
-
 
     def setGlobalVariable(self, tag, value = None):
         self.mGlobalVariables[tag] = value
