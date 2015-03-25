@@ -35,7 +35,7 @@ class HUD:
 
     def addCooldownButton(self, bFunction, bParams, bPosition, bTagAnimation, vecCollision, cooldown = 1.0):
         global mE
-        b = CooldownButton()
+        b = CooldownButton(cooldown)
         mE.mEntityManager.addEntity(b,"Button","UI")
         mE.mAnimationManager.setEntityAnimation(b, bTagAnimation)
         

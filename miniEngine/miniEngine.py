@@ -259,6 +259,10 @@ class MiniEngine:
             self.mGlobalVariables["GameTime"] = time.clock() - self.mGlobalVariables["PausedTime"]
         return self.mGlobalVariables["GameTime"]
 
+    def getActualPauseTime(self):
+        self.mGlobalVariables["ActualPauseTime"] =   time.clock() - self.mGlobalVariables["LastPause"]
+        return self.mGlobalVariables["ActualPauseTime"]
+
     def pauseGame(self):
         self.getGameTime()
         self.mGlobalVariables["LastPause"] = time.clock()

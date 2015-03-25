@@ -69,7 +69,9 @@ class Portal(Tile):
                 mE.mJukebox.PlaySound("MonstersComing")
 
                 if(len(self.waves) - 1 < self.actualWave):
-                    mE.mJukebox.PlaySound("Heart")
+                    #mE.mJukebox.StopMusic()
+                    mE.mJukebox.PlaySong("BossFight")
+                    #mE.mJukebox.PlaySound("Heart")
                 
 
     def summonNextMonster(self):
@@ -244,9 +246,9 @@ class Tower(Entity):
         Entity.__init__(self)
         self.graphPosition = (-1,-1,-1)
 
-        self.hp = HealthBar(10)
-        self.hp.addToEntityManager()
-        self.hp.setAnimation("TowerHealthBarStart", "TowerHealthBarEnd", "TowerHealthBarMiddle")
+        self.hp = None #HealthBar(10)
+        #self.hp.addToEntityManager()
+        #self.hp.setAnimation("TowerHealthBarStart", "TowerHealthBarEnd", "TowerHealthBarMiddle")
         self.rBoundingCircle = 32
         
         self.target = None
@@ -259,7 +261,19 @@ class Tower(Entity):
         self.chooseTargetMethod = chooseTarget
         self.tag = ""
 
-    def update(self):            
+    def update(self):
+        healthPercentage = (self.hp.health) / self.hp.maxHealth
+        if(healthPercentage <= 0.5):
+            mE.mParticleManager.createParticle(self.position,"Smoke",
+                                                 {"CenterVelocity" : Vec2d(0,random.random() * -.8 -.1),
+                                                  "CenterPosition" : self.position+(random.random() * 18 + 15,30),
+                                                  "Angle"          : random.random() *360,
+                                                  "Radius"         : random.random() * 10,
+                                                  "Step"           : 0.05,
+                                                  "Dispersion"     : random.random() * 100})
+
+
+        
         if(mE.mGlobalVariables["GameTime"] - self.lastShoot >= self.cooldownShoot):
             #If don't have a target, choose one
             if(self.target == None or (self.target != None and (self.target.isDead or distanceEntity(self, self.target) < self.range))):
@@ -276,6 +290,7 @@ class Tower(Entity):
         for m in lMonsters:
             if isOnCollision(m,self):
                 self.hp.takeDamage(0.1)
+                            
         if(self.hp.health <= 0 ):
             self.die()
 
@@ -293,7 +308,7 @@ class Tower(Entity):
 
     def die(self):
         global mE
-        mE.mEntityManager.removeEntity(self,self.tag)
+        mE.mEntityManager.removeEntity(self,"Tower")
         graph = mE.mGlobalVariables["Graph"]
         graph.addDeath(self.graphPosition)
         graph.addWeightNode(self.graphPosition,-100)

@@ -4,10 +4,11 @@ bubbleSound = "bubble3.ogg"
 
 #Stage Selection
 worldMapSong = "Mansardian-Background.ogg"
-winSong = "WinSong.ogg"
+victorySound = "VictoryFanfare.ogg"
 
 #Level Audio
 levelSong = "Forest-Song.ogg"
+bossFight = "Forest-Boss-Song.ogg" #"Forest-Boss-Song.ogg"
 newTowerSound = "BookClose.ogg"
 destructedTower = ""
 error = "error.ogg"
@@ -16,6 +17,12 @@ magic = "magic.ogg"
 teleport = "teleport.ogg"
 heart = "heart-beat.ogg"
 coming = "the monsters are coming.ogg"
+
+heal = "heal.ogg"
+timeRunning = "timeRunning.ogg"
+alarmClock = "alarmClock.ogg"
+
+
 monsterDie = [] #Para orcs qualquer uma da pasta giant
 
 lMonstersSounds = []

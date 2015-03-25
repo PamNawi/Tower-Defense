@@ -93,6 +93,8 @@ class Jukebox:
         self.songs = {}
  
     def PlaySong(self,cue_name,interrupt=False):
+        if(not self.music_on):
+            return
         """Cue this song. If "interrupt," the song will start even
         if one is already playing."""
         path = self.songs.get( cue_name )
@@ -129,6 +131,8 @@ class Jukebox:
         self.sounds[ cue_name ] = new_sound
  
     def PlaySound(self,cue_name):
+        if(not self.sound_on):
+            return
         ## How to check whether sound player is busy?
         if cue_name in self.sounds:
             self.sounds[ cue_name ].play()

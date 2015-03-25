@@ -1,16 +1,16 @@
 t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t
-t	3	0	0	tg	tg	r	t	t	t	t	t	0	0	0	0	0	tg	0	0	t
-t	0	0	0	0	tg	tg	t	t	t	t	0	0	0	0	0	tg	tg	tg	0	t
-t	0	0	0	0	0	0	t	t	t	0	0	0	0	0	0	tg	r	tg	tg	t
-t	0	0	0	0	0	0	t	t	0	0	0	0	0	0	0	tg	tg	tg	0	t
-t	r	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	tg	0	0	t
-t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	t	t	t	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	t	t	t	t	t	0	0	0	r	0	0	0	0	0	0	0	0	0	0	t
-t	t	t	t	t	t	t	0	0	0	0	0	0	0	0	0	0	0	0	0	t
-t	t	t	t	t	t	t	t	0	0	0	0	0	0	0	0	0	0	4		t
-t	t	t	t	t	t	t	t	t	0	0	0	0	0	0	0	0	0			t
-t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t
-t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t	t
+s1	3	s1	r	t	t	t	t	t	t	t	t	s1	4		s	s1	tg	s	s	s
+s	s1	s	s1	s	tg	t	t	t	t	t	s1	s			s1	tg	tg	tg	s1	s
+s1	s	s1	s	s1	s	s1	t	t	t	s1	s	s1	s	s1	s	tg	tg	tg	tg	s
+s	s1	s	s1	s	s1	s	t	t	s1	s	s1	s	s1	s	s1	tg	tg	tg	s1	s
+s1	tg	s1	t	s1	s	s1	s	s1	s	s1	s	s1	s	s1	s	s1	tg	s1	s	r
+tg	tg	s	s1	s	s1	s	r	s	s1	s	s1	s	s1	s	s1	s	s1	s	t	s
+tg	tg	tg	s	s1	s	s1	s	s1	t	t	s	s1	s	s1	s	s1	s	s1	s	s
+s	tg	s	s1	s	s1	s	s1	s	t	s	s1	s	s1	s	s1	s	s1	s	s1	s
+s1	s	s1	s	r	s	s1	s	s1	s	s1	s	s1	s	s1	s	s1	s	s1	s	s
+s	s1	s	s1	s	s1	s	s1	s	s1	s	s1	s	s1	r	s1	s	s1	t	s1	s
+w1	w1	w1	w1	w1	w1	w2	s	s1	s	s1	s	s1	s	s1	s	s1	t	t	s	w0
+w4	w4	w4	w4	w4	w4	w10	w2	s	s1	s	s1	s	s1	s	s1	s	s1	s	s1	w3
+w4	w4	w4	w4	w4	w4	w4	w10	w2	s	s1	s	s1	s	s1	s	s1	s	s1	s	w3
+w4	w4	w4	w4	w4	w4	w4	w4	w10	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w9
+w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4

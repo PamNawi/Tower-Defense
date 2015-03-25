@@ -32,8 +32,9 @@ class StageSelection:
 
     def loadSounds(self):
         mE.mJukebox.LoadSong(worldMapSong, "WorldMap")
-        mE.mJukebox.LoadSong(worldMapSong, "Win")
-        mE.mJukebox.LoadSong(worldMapSong, "Lose")
+        
+        mE.mJukebox.LoadSound(victorySound, "Win")
+        mE.mJukebox.LoadSound(worldMapSong, "Lose")
         
     def loadAnimations(self):
         mE.mAnimationManager.addAnimation(lImagesBackgroundWM[0],lImagesBackgroundWM[1],"Background")
@@ -98,9 +99,9 @@ class StageSelection:
     def gameOverScreenUpdate(self, win = True):
         self.end = False
         if(win):
-            mE.mJukebox.PlaySong("Win")
+            mE.mJukebox.PlaySound("Win")
         else:
-           mE.mJukebox.PlaySong("Lose")
+           mE.mJukebox.PlaySound("Lose")
            
         tIniLoop = mE.getGameTime()
         while not self.end:

@@ -22,6 +22,10 @@ lImagesTabBar       = ([".//Resources//UI//bartab3.png"],1)
 lImagesBottomBar    = ([".//Resources//UI//bottomBar.png"],1)
 lImagesMoneyBar     = ([".//Resources//UI//moneyUIBar.png"],1)
 
+lImagesMuteButtonOn = ([".//Resources//UI//muteButtonOn.png"],1)
+lImagesMuteButtonOff = ([".//Resources//UI//muteButtonOff.png"],1)
+
+
     #Progress Bar
 lImagesProgressStart    =([".//Resources//UI//progressBarStart.png"],1)
 lImagesProgressMiddle   =([".//Resources//UI//progressBarMiddle.png"],1)
@@ -34,6 +38,11 @@ lImagesSlowIcon     =([".//Resources//UI//slowTowerIcon.png"],1)
 lImagesDamageIcon   =([".//Resources//UI//damageTowerIcon.png"],1)
 lImagesPoisonIcon   =([".//Resources//UI//poisonTowerIcon.png"],1)
 lImagesFarmIcon   =([".//Resources//UI//FarmTowerIcon.png"],1)
+
+    #Skills
+lImagesTimeStopIcon     =([".//Resources//UI//timeSkillIcon.png"],1)
+lImagesHealIcon         =([".//Resources//UI//HealSkillIcon.png"],1)
+lImagesFireBallIcon     =([".//Resources//UI//fireBallSkillIcon.png"],1)
 
     #HealthBars
 lImagesHPBarEnemyS = ([".//Resources//UI//eHealthBarStart.png"],1)
@@ -53,20 +62,8 @@ lImagesGameOverWin    = ([".//Resources//UI//youWin.png"],1)
 lImagesGameOverLose    = ([".//Resources//UI//youLose.png"],1)
 
     #Map Entitys
-lImagesGrass    = ([".//Resources//Tilesets//grass.png"],1)
-lImagesGraph    = ([".//Resources//Tilesets//grass.png"],1)
 lImagesVillage  = ([".//Resources//Tilesets//fullcity.png"],1)
 lImagesPortal = ([".//Resources//Tilesets//portal.png"],0.3)
-
-        #Obstacles
-lImagesRock = ([".//Resources//Tilesets//rock.png"],1)
-lImagesCuttedTree = ([".//Resources//Tilesets//cuttedTree.png"],1)
-lImagesTree0 = ([".//Resources//Tilesets//tree.png"],1)
-lImagesTallGrass = ([".//Resources//Tilesets//tallgrass.png"],1)
-
-        #Brigde
-lImagesBrigde= loadListOfSprites(".//Resources//Tilesets//brigde//brigde",13)
-lImagesWater = loadListOfSprites(".//Resources//Tilesets//water//water",13)
 
     #Portal Particles
 lImagesPortalParticle = ([".//Resources//portalParticle.png",
@@ -92,3 +89,15 @@ lImagesSlowParticle = ([".//resources//Projectiles//slowParticle.png",
 
 lImagesPoisonParticle = ([".//resources//Projectiles//poisonParticle.png"],1)
 lImagesFarmParticle = ([".//resources//Projectiles//farmParticle.png"],1)
+
+
+#Skills Particles
+lImagesHealParticle =([".//Resources//Skills//HealParticle.png"],1)
+
+#Extra Particles
+lImagesSmokeParticle = ([".//Resources//smokeParticle.png",
+                          ".//Resources//smokeParticle2.png",
+                          ".//Resources//smokeParticle3.png",
+                          ".//Resources//smokeParticle4.png",],0.3)
+
+
