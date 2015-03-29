@@ -1,7 +1,7 @@
-f0	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f2	tg
-f3	3	1	0	1	0	1	f	1	0	1	0	1	0	1	f	1	t	1	f5	tg
-f3	1	f	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	f5	tg
-w1	w1	w1	w1	w1	w1	w1	w1	w2	0	1	0	1	0	1	0	1	0	1	f5	0
+f0	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f2	0
+f3	3	1	0	1	0	1	f	1	0	1	0	1	0	1	f	1	t	1	f5	1
+f3	1	f	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	f5	0
+w1	w1	w1	w1	w1	w1	w1	w1	w2	0	1	0	1	0	1	0	1	0	1	f5	1
 w4	w4	w4	w4	w4	w4	w4	w4	w11	w1	w1	w1	w1	w2	0	1	0	1	0	f5	0
 w7	w7	w7	w7	w7	w7	w7	w7	w10	w4	w4	w4	w4	w11	w1	w1	w1	b9	b10	w1	w1
 f3	0	t	0	1	0	1	0	w6	w7	w7	w7	w7	w10	w4	w4	w4	b9	b10	w4	w4
@@ -10,7 +10,7 @@ f3	0	1	0	1	0	1	0	1	f	1	0	1	0	1	0	1	0	1	f5	1
 f3	1	0	1	f	1	0	1	0	1	0	1	0	1	0	1	f	1	0	f5	0
 f3	4		0	1	0	1	0	1	r	1	0	1	0	1	0	1	0	f0	t	1
 f3			1	0	1	0	1	0	1	0	1	0	1	0	1	f0	f1	t	1	0
-t	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	t	0	1	0	tg
-1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	tg	tg	tg
-tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg
-tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	tg	t
+t	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	f1	t	0	1	0	w0
+0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	0	1	w0	w1	w12
+w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w1	w12	w4	w4
+w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	w4	t

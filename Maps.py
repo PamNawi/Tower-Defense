@@ -1,5 +1,5 @@
 walkable = ["0", "1", "3","4", "tg" , "b0", "b1", "b2", "b3", "b4", "b5" , "b9", "b10"]
-walkable += ["s", "s1", "tsg"]
+walkable += ["s", "s1", "tsg", "f"]
 tileWidth   = 50
 tileHeigth  = 50
 

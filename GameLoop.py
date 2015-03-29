@@ -63,7 +63,6 @@ class Game:
     def loadMenuSounds(self):
         mE.mJukebox.LoadSong(menuSong, "MenuSong")
         mE.mJukebox.LoadSound(bubbleSound, "BubbleSound")
-
         mE.mJukebox.PlaySound("BubbleSound")
         
     def menuLoop(self):

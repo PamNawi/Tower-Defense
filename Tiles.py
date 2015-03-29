@@ -5,6 +5,7 @@ from MonstersAnimations import *
 from MonstersStats import *
 from Maps import *
 from HealthBar import *
+from TowerFunctions import *
 
 class Portal(Tile):
     def __init__(self, dicParams):
@@ -66,11 +67,11 @@ class Portal(Tile):
                     tMonster += 1
                 self.actualWave += 1
                 self.lastSummon = mE.getGameTime() + 3.0
-                mE.mJukebox.PlaySound("MonstersComing")
+                mE.mGlobalVariables["General"].monstersComming()
 
                 if(len(self.waves) - 1 < self.actualWave):
                     #mE.mJukebox.StopMusic()
-                    mE.mJukebox.PlaySong("BossFight")
+                    mE.mJukebox.PlaySong("BossFight",True)
                     #mE.mJukebox.PlaySound("Heart")
                 
 
@@ -100,7 +101,9 @@ class Portal(Tile):
         mE.mEntityManager.addEntity(m,"Monster","Monsters")
         mE.mPrimitiveManager.addPrimitive(m.lines, "MonsterRoute")
         m.lines.color = (random.randint(0,255) ,random.randint(0,255),random.randint(0,255))
-        m.setPosition(m.lPositions[0][0],m.lPositions[0][1])
+        m.setPosition(self.position.x + tileWidth/2 -8, self.position.y + tileHeigth/2-8)
+        m.recalculateRoute()
+        #m.setPosition(Vec2d(m.lPositions[0][0],m.lPositions[0][1]))
 		
         m.maxSpeed = statsMonster["Speed"];
         m.hp = HealthBar(statsMonster["HP"]);
@@ -109,8 +112,6 @@ class Portal(Tile):
         m.hp.addToEntityManager()
         m.hp.setAnimation("EnemyHealthBarStart", "EnemyHealthBarEnd", "EnemyHealthBarMiddle")
         m.isDead = False
-        m.setCenterBoundingCircle(16,16)
-        m.setRadiusBoundingCircle(10)
         m.setCollisionBlock(Vec2d(32,32))
         return m
 
@@ -122,91 +123,73 @@ class Portal(Tile):
         for wave in self.waves:
             for monster in self.waves[wave]:
                 self.nMonsters += monster
-        
 
-class Monster(Entity):
+class Monster(PathFollowing):
     def __init__(self):
-        Entity.__init__(self)
-        self.path = None
+        PathFollowing.__init__(self, [])
         self.graphPosition = mE.mGlobalVariables["PortalCoord"]
+        
         self.lines = Lines()
-        
         self.desloc = random.randint(-15,15)
-        self.recalculateRoute()
-        
+
+        self.route = None
+        #self.recalculateRoute()
         self.maxSpeed = 1
         self.speed = 1
-        self.rBoundingCircle = 16
 
         self.poison = 0.0
         self.lastDamageByPoison = mE.getGameTime()
-        
+
     def update(self):
-        self.move()
+        self.maxVelocity = self.maxSpeed
+        PathFollowing.update(self)
+
         diffLastDamagePoison = mE.getGameTime() - self.lastDamageByPoison
         if(self.poison and diffLastDamagePoison > 1.0):
             self.takeDamage(1)
             self.lastDamageByPoison = mE.getGameTime()
-        
-        if(self.hp.health <= 0):
-            self.die()
 
         self.hp.setPosition(self.position)
+        
+        c = self.getCenterCollisionBlock()
+        if(self.lines != None):
+            if(len(self.lines.vertices) <= 1):
+                mE.mPrimitiveManager.removePrimitive(self.lines,"MonsterRoute")
+                self.lines = None
+                return
+                
+            elif(distance(c,Vec2d(self.lines.vertices[1])) <= 30):
+               self.lines.vertices =  self.lines.vertices[1:]
+            
+            self.lines.vertices =  ((c.x + self.desloc, c.y + self.desloc),) + self.lines.vertices[1:]
+
+        if(abs(self.velocity.x) > abs(self.velocity.y)):
+            if(self.velocity.x < 0):
+                self.direction = "Left"
+            else:
+                self.direction = "Right"
+        else:
+            if(self.velocity.y > 0):
+                self.direction = "Down"
+            else:
+                self.direction = "Up"
+        mE.mAnimationManager.setEntityAnimation(self, self.tag+self.direction)
+        
 
     def takeDamage(self, damage):
         if(self.hp.health > 0):
             self.hp.takeDamage(damage)
+        if(self.hp.health <= 0):
+            self.die()
 
-    def move(self):
-        if(self.lPositions):
-            error = 5
-            nextPosition =  self.lPositions[0]
-            npTop =     (nextPosition[0] + error, nextPosition[1] + error)
-            npBottom =  (nextPosition[0] - error, nextPosition[1] - error)
-            c = self.getCenterCollisionBlock()
-            
-            if( npTop[0] >= self.position[0] and npTop[1] >= self.position[1]  and npBottom[0] <= self.position[0] and npBottom[1] <= self.position[1] ):
-                self.lPositions = self.lPositions[1:]
-            #if(tNextPosition[0] >= self.position[0] and tNextPosition[1] >= self.position[1] and
-            #   bNextPosition[0] <= self.position[0] and nextPosition[1] <= self.position[0]):
-            #    self.lPositions = self.lPositions[1:]
-                
-                if(len(self.lPositions) > 0):
-                    nextPosition = self.lPositions[0]
-                    self.graphPosition = (0, nextPosition[0] - tileWidth /4 , nextPosition[1] - tileHeigth /4)
-                    c = self.getCenterCollisionBlock()
-                    self.lines.vertices = ((c.x, c.y),) + self.lines.vertices[2:]
-                else:
-                    self.hp.health = 0
-                    return
-
-            realSpeed = self.maxSpeed * self.speed
-            
-            if(nextPosition[0] > self.position[0]):
-                self.setPosition(self.position[0] + realSpeed, self.position[1])
-                mE.mAnimationManager.setEntityAnimation(self, self.tag+"Right")
-
-            if(nextPosition[1] > self.position[1]):
-                self.setPosition(self.position[0], self.position[1]+ realSpeed)
-                mE.mAnimationManager.setEntityAnimation(self, self.tag+"Down")
-
-            if(nextPosition[0] < self.position[0]):
-                self.setPosition(self.position[0] - realSpeed, self.position[1])
-                mE.mAnimationManager.setEntityAnimation(self, self.tag+"Left")
-
-            if(nextPosition[1] < self.position[1]):
-                self.setPosition(self.position[0], self.position[1] - realSpeed)
-                mE.mAnimationManager.setEntityAnimation(self, self.tag+"Up")
-
-            c = self.getCenterCollisionBlock()
-            self.lines.vertices =  ((c.x + self.desloc, c.y + self.desloc),) + self.lines.vertices[1:]
-            
     def die(self):
         global mE
-        mE.mPrimitiveManager.removePrimitive(self.lines,"MonsterRoute")
+        if(self.lines != None):
+            mE.mPrimitiveManager.removePrimitive(self.lines,"MonsterRoute")
         mE.mEntityManager.removeEntity(self,"Monster")
         graph = mE.mGlobalVariables["Graph"]
-        mE.mGlobalVariables["Money"] += 1
+        mE.mGlobalVariables["Money"] += 2
+        self.convertPositionToGraph()
         graph.addDeath(self.graphPosition)
         self.isDead = True
         self.hp.removeEntityManager()
@@ -217,38 +200,41 @@ class Monster(Entity):
         mE.mEntityManager.addEntity(tomb, "Tombstone", "Tombstone")
         mE.mAnimationManager.setEntityAnimation(tomb, "Tombstone")
         tomb.setPosition(self.getCenterCollisionBlock())
-        
 
     def recalculateRoute(self):
         CityCoord       = mE.mGlobalVariables["CityCoord"]
         graph           = mE.mGlobalVariables["Graph"]
-        oldRoute = self.path
-        self.path = graph.aStar(self.graphPosition, CityCoord)
-        if(not self.path):
+        oldRoute = self.route
+        self.convertPositionToGraph()
+        self.route = graph.aStar(self.graphPosition, CityCoord)
+        if(not self.route):
             print "Não existe 1 rota"
-            self.path = oldRoute
+            self.route = oldRoute
             return
-        self.transformGraphRouteToScreenRoute()            
+        else:
+            self.transformGraphRouteToScreenRoute()
+            self.currentNode = 1         
         
     def transformGraphRouteToScreenRoute(self):
-        self.lPositions = []
-        for coord in self.path:
-            self.lPositions += [(coord[1] + tileWidth /4, coord[2] + tileHeigth /4)]
-
         lvPositions = []
-        for coord in self.path:
+        self.path.nodes = []
+        for coord in self.route:
             lvPositions += [(coord[1] + tileWidth /2 + self.desloc , coord[2] + tileHeigth /2 + self.desloc)]
-        self.lines.vertices = tuple(lvPositions)
+            self.path.addNode(Vec2d(coord[1] + tileWidth /2 -8, coord[2] + tileHeigth /2 - 16))
+        c = self.getCenterCollisionBlock()
+        self.lines.vertices =  ((c.x + self.desloc, c.y + self.desloc),) + tuple(lvPositions[1:])
 
+    def convertPositionToGraph(self):
+        x = int(self.position.x / tileWidth) * tileWidth
+        y = int(self.position.y / tileHeigth) * tileHeigth
+        self.graphPosition = (0, x, y)
 
 class Tower(Entity):
     def __init__(self, radiusRange = 100):
         Entity.__init__(self)
         self.graphPosition = (-1,-1,-1)
 
-        self.hp = None #HealthBar(10)
-        #self.hp.addToEntityManager()
-        #self.hp.setAnimation("TowerHealthBarStart", "TowerHealthBarEnd", "TowerHealthBarMiddle")
+        self.hp = None
         self.rBoundingCircle = 32
         
         self.target = None
@@ -256,7 +242,7 @@ class Tower(Entity):
 
         self.cooldownShoot = 0.5
         self.lastShoot = mE.mGlobalVariables["GameTime"] - self.cooldownShoot
-
+ 
         self.towerEffect = None
         self.chooseTargetMethod = chooseTarget
         self.tag = ""
@@ -274,7 +260,7 @@ class Tower(Entity):
 
 
         
-        if(mE.mGlobalVariables["GameTime"] - self.lastShoot >= self.cooldownShoot):
+        if(mE.getGameTime() - self.lastShoot >= self.cooldownShoot):
             #If don't have a target, choose one
             if(self.target == None or (self.target != None and (self.target.isDead or distanceEntity(self, self.target) < self.range))):
                 self.chooseTargetMethod(self)
@@ -283,13 +269,14 @@ class Tower(Entity):
                 self.chooseTargetMethod(self)
                 self.lastlastShoot = time.clock()
                 self.towerEffect(self,self.target)
-            self.lastShoot = mE.mGlobalVariables["GameTime"]
-
+            self.lastShoot = mE.getGameTime()
 
         lMonsters = mE.mEntityManager.getTagEntitys("Monster")
         for m in lMonsters:
             if isOnCollision(m,self):
-                self.hp.takeDamage(0.1)
+                self.hp.takeDamage(0.6)
+                if(healthPercentage < 1.0):
+                    mE.mGlobalVariables["General"].bringDown()
                             
         if(self.hp.health <= 0 ):
             self.die()
@@ -314,6 +301,7 @@ class Tower(Entity):
         graph.addWeightNode(self.graphPosition,-100)
         self.isDead = True
         self.hp.removeEntityManager()
+        mE.mJukebox.PlaySound("TowerDown")
 
 
 def chooseTarget(self):
@@ -336,13 +324,41 @@ class City(Tile):
         self.setCollisionBlock(Vec2d(tileWidth *2,tileHeigth*2))
         self.isDead = False
 
+
+        self.lastShoot = mE.getGameTime() # - self.cooldownShoot
+        self.cooldownShoot = 5.0
+        self.damage = 1
+        self.range =  100
+        self.target = None
+
     def update(self):
         lMonsters = mE.mEntityManager.getTagEntitys("Monster")
         for m in lMonsters:
             if isOnCollision(m,self):
                 self.hp.takeDamage(0.1)
+    
         if(self.hp.health <= 0 ):
             self.die()
+
+        if(self.hp.health == 5):
+            mE.mGlobalVariables["General"].laugh()
+
+        diffLastShoot = mE.getGameTime() -  self.lastShoot
+        if(diffLastShoot  >= self.cooldownShoot):
+            if(self.target == None or (self.target != None and (self.target.isDead or distanceEntity(self, self.target) < self.range))):
+                chooseTarget(self)
+
+            if(self.target != None):
+                chooseTarget(self)
+                self.lastShoot = mE.getGameTime()
+                projectile =  Projectile(self.target)
+                mE.mEntityManager.addEntity(projectile, "Projectil", "Monsters")
+                mE.mAnimationManager.setEntityAnimation(projectile, "SimpleProjectil")
+                projectile.tower = self
+                projectile.setCollisionBlock(Vec2d(10,10))
+                projectile.setPosition(self.position + Vec2d(25,25))
+            
+            
 
     def setPosition(self,x,y):
         Tile.setPosition(self,x,y)

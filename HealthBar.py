@@ -19,14 +19,30 @@ class HealthBar(Bar):
 
         #Remove the last "n damage" middle section
         nmiddle = self.middle[int(self.health):]
-        for i in nmiddle:
-            i.setPosition(self.start.position)
 
-    def heal(self, healPower):
-        self.health += healPower
-        if(self.heal > self.maxHealth):
-            self.heal = self.maxHealth
         self.setPosition(self.position)
+
+    def heal(self, healPower = None):
+        if(healPower == None):
+            self.health = self.maxHealth
+        else:
+            self.health += healPower
+            if(self.heal > self.maxHealth):
+                self.heal = self.maxHealth
+        self.setPosition(self.position)
+
+    def setPosition(self, position):
+        Entity.setPosition(self,position)
+
+        self.start.setPosition(position)
+        desloc = 1
+        
+        for mid in self.middle[:int(self.health)]:
+            mid.setPosition(Vec2d(position[0]+desloc * self.wMiddle, position[1]))
+            desloc +=1
+        for mid in self.middle[int(self.health):]:
+            mid.setPosition(Vec2d(-100,-100))
+        self.end.setPosition(position[0] + self.wMiddle * desloc, position[1])
 
     def addToEntityManager(self):
         mE.mEntityManager.addEntity(self.start, "HealthBarStart", "UI")

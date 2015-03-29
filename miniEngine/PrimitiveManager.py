@@ -125,7 +125,8 @@ class PrimitiveManager():
             self.primitives["Line"][tag].remove(primitive)
 
         elif isinstance(primitive, Lines):
-            self.primitives["Lines"][tag].remove(primitive)
+            if(self.primitives["Lines"][tag].count(primitive) > 0):
+                self.primitives["Lines"][tag].remove(primitive)
 
         else:
             print "Nao existe nenhuma primitiva desse tipo!"

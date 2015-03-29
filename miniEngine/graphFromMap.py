@@ -81,4 +81,5 @@ class GraphFromMap(Graph):
 
     def convertToScreenPosition(self,node):
         return (node[0], node[2] * self.tileWidth, node[1] *self.tileHeigth)
+
         

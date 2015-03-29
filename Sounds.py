@@ -10,18 +10,23 @@ victorySound = "VictoryFanfare.ogg"
 levelSong = "Forest-Song.ogg"
 bossFight = "Forest-Boss-Song.ogg" #"Forest-Boss-Song.ogg"
 newTowerSound = "BookClose.ogg"
-destructedTower = ""
+destructedTower = "TowerDown.ogg"
 error = "error.ogg"
 damage = "damage.ogg"
 magic = "magic.ogg"
 teleport = "teleport.ogg"
 heart = "heart-beat.ogg"
-coming = "the monsters are coming.ogg"
+explosionSound = "explosion.ogg"
 
 heal = "heal.ogg"
 timeRunning = "timeRunning.ogg"
 alarmClock = "alarmClock.ogg"
 
+
+coming = "the monsters are coming.ogg"
+bringDown = "BringThisDown.ogg"
+laugh = "evilLaugh.ogg"
+underAttack = "TowerUnderAttack.ogg"
 
 monsterDie = [] #Para orcs qualquer uma da pasta giant
 

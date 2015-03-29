@@ -22,20 +22,20 @@ class Renderer:
         self.width = width
         self.height = height
         
-    def render(self, mEM , mPrM, mTexts, mMM , mPM):
+    def render(self, mEM , mPrM, mTexts, mMM , mPM, shakeVec = Vec2d(0,0)):
         self.screen.fill((0,0,0))
 
         self.onScreen = []
         
         self.renderMaps(mMM)
-	self.renderAll()
-        self.renderPrimitives(mPrM)
+	self.renderAll(shakeVec)
+        self.renderPrimitives(mPrM, shakeVec)
         self.renderEntitys(mEM)
         self.renderParticles(mPM)
 
         self.depthSort()
-        self.renderAll()
-        self.renderTexts(mTexts)
+        self.renderAll(shakeVec)
+        self.renderTexts(mTexts, shakeVec)
 
         #self.renderCollisionBlocks(mEM)
         pygame.display.flip()
@@ -83,11 +83,11 @@ class Renderer:
                 if ( self.isOnScreen(e)):
                     self.onScreen += [e]
 
-    def renderTexts(self, mTexts):
+    def renderTexts(self, mTexts, shakeVec = Vec2d(0,0)):
         #Render all texts
         lTexts = mTexts.texts.values()
         for t in lTexts:
-            self.screen.blit(t.font.render(t.content, t.antiAlias, t.color), (t.position.x , t.position.y))
+            self.screen.blit(t.font.render(t.content, t.antiAlias, t.color), (t.position.x + shakeVec.x , t.position.y + shakeVec.y))
         
 
     def renderMaps(self,mMM):
@@ -113,15 +113,15 @@ class Renderer:
     def depthSort(self):
         pass
 
-    def renderAll(self):
+    def renderAll(self, shakeVec = Vec2d(0,0)):
         #If is on screen, render
         for e in self.onScreen:
             if e.surface != None:
-                self.screen.blit(e.surface.getFrame(), (e.position[0], e.position[1]))
+                self.screen.blit(e.surface.getFrame(), (e.position[0] + shakeVec.x, e.position[1] + + shakeVec.y))
 		self.onScreen = []
 
 
-    def renderPrimitives(self, mPM):
+    def renderPrimitives(self, mPM, shakeVec = Vec2d(0,0)):
         lrects = mPM.primitives["Rect"].values()
         lpolys = mPM.primitives["Polygon"].values()
         lcircles = mPM.primitives["Circle"].values()
@@ -188,8 +188,24 @@ class MiniEngine:
         self.mGlobalVariables["ActualPauseTime"] = 0.0
         self.mGlobalVariables["LastPause"] = 0.0
 
+        self.mGlobalVariables["ScreenShake"] = False
+        self.mGlobalVariables["tScreenShaking"] = 0.0
+        self.mGlobalVariables["tStartShaking"]= 0.0
+
     def render(self):
+        if(self.mGlobalVariables["ScreenShake"]):
+            t = self.getGameTime()
+            diffTShaking = t -  self.mGlobalVariables["tScreenShaking"]
+            if(diffTShaking < self.mGlobalVariables["tStartShaking"]):#still shaking
+                amplitude = self.getAmplitudeShaking()
+                vecShake = amplitude * 16 * Vec2d(random.random(),random.random())
+                self.mRenderer.render(self.mEntityManager, self.mPrimitiveManager, self.mTextManager, self.mMapManager, self.mParticleManager, vecShake)
+                return
+            else:
+                self.mGlobalVariables["ScreenShake"] = False
+                
         self.mRenderer.render(self.mEntityManager, self.mPrimitiveManager, self.mTextManager, self.mMapManager, self.mParticleManager)
+
 
     def treatEvents(self):
         for event in pygame.event.get():
@@ -268,18 +284,49 @@ class MiniEngine:
         self.mGlobalVariables["LastPause"] = time.clock()
         self.mGlobalVariables["ActualPauseTime"] = 0.0
         self.pause = True
-        #print "Pause"
-        #self.printTime()
 
     def unpauseGame(self):
         self.mGlobalVariables["PausedTime"] += self.mGlobalVariables["ActualPauseTime"]
         self.mGlobalVariables["ActualPauseTime"] = 0.0
         self.getGameTime()
         self.pause = False
-        #print "Despause"
 
 
     def printTime(self):
         print(self.mGlobalVariables["GameTime"],self.mGlobalVariables["PausedTime"],self.mGlobalVariables["ActualPauseTime"], time.clock())
 
-        
+
+    def activeScreenShake(self,time , frequency = 60):            
+        self.mGlobalVariables["ScreenShake"] = True
+        self.mGlobalVariables["tScreenShaking"] = time
+        self.mGlobalVariables["tStartShaking"]= self.getGameTime()
+        self.mGlobalVariables["ShakingFrequency"] = frequency
+        sampleCount = int(time * frequency)
+        self.samples = []
+        for i in range(sampleCount):
+            if(random.randint(0,3) % 2 == 0):
+                self.samples +=[-1]
+            else:
+                self.samples +=[1]
+
+    def decay (self, t):
+        endShaking = self.mGlobalVariables["tScreenShaking"]  + self.mGlobalVariables["tStartShaking"]
+        if(t >= endShaking ): return 0;
+ 
+        return (endShaking - t) / endShaking;
+
+    def getAmplitudeShaking(self):
+        t = self.getGameTime() - self.mGlobalVariables["tStartShaking"]
+        s = t
+        s0 = int(s)
+        s1 = s0 + 1
+
+        k = self.decay(t)
+
+        return (self.noise(s0) + (s - s0)*(self.noise(s1) - self.noise(s0))) * k;
+
+    def noise(self, s):
+        if( s >= len(self.samples)):
+            return 0
+        else:
+            return self.samples[s]

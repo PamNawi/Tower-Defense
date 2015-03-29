@@ -92,7 +92,7 @@ class Jukebox:
     def ResetSongData(self):
         self.songs = {}
  
-    def PlaySong(self,cue_name,interrupt=False):
+    def PlaySong(self,cue_name,interrupt=True):
         if(not self.music_on):
             return
         """Cue this song. If "interrupt," the song will start even
@@ -116,7 +116,10 @@ class Jukebox:
                 print "Couldn't load song '"+cue_name+"'."
                 return
             try:
-                pygame.mixer.music.play()
+                if(interrupt):
+                    pygame.mixer.music.play(-1)
+                else:
+                    pygame.mixer.music.play()
                 self.Comment("Cue music: '"+cue_name+"'")
             except:
                 print "Couldn't play song '"+cue_name+"'."

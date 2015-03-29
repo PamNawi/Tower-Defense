@@ -1,3 +1,4 @@
+# -*- coding: cp1252 -*-
 from Vector2D import *
 from ESTManager import *
 import random
@@ -45,7 +46,7 @@ class SteeringEntity(Entity):
         self.aceleration = self.force * (1/self.mass)
         self.velocity = self.velocity + self.aceleration        
         self.velocity = self.velocity.normalized() * self.maxVelocity
-        self.setPosition(self.position+ self.velocity)#self.position = self.position + self.velocity
+        self.setPosition(self.position+ self.velocity)
 
     def sumForces(self):
         self.force = self.wSeek         * self.Seek(self.targetPosition)
@@ -121,3 +122,57 @@ class SteeringEntity(Entity):
         s += "\nAceleration: "+ str(self.aceleration)
         s += "\nPosition: "+ str(self.position)
         return s
+
+class Path():
+    def __init__(self):
+        self.nodes = []
+
+    def addNode(self, node):
+        self.nodes += [node]
+
+    def getNodes(self):
+        return self.nodes
+
+    def getFirstPosition(self):
+        return self.nodes[0]
+
+
+class PathFollowing(SteeringEntity):
+    def __init__(self, lNodes):
+        SteeringEntity.__init__(self)
+        self.path = Path()
+        self.path.nodes = lNodes
+        self.currentNode = 0
+
+    def sumForces(self):
+        nodes = self.path.getNodes()
+
+        target = nodes[self.currentNode]
+        if(distance(self.position, target) <= 10):
+            self.currentNode += 1
+
+            if(self.currentNode >= len(nodes)):
+                self.currentNode = len(nodes) - 1
+
+        if(target == None):
+            self.force = Vec2d(0,0)
+        else:
+            self.force = self.Seek(target)
+
+    def selectNextNode(self):
+        nodes = self.path.getNodes()
+
+        target = nodes[self.currentNode]
+        if(distance(self.position, target) <= 10):
+            self.currentNode += 1
+
+            if(self.currentNode >= len(nodes)):
+                self.currentNode = len(nodes) - 1
+        
+
+    def getCurrentNode(self):
+        return self.nodes[self.currentNode]
+
+def distance(e1, e2):
+    return e1.get_distance(e2)
+    

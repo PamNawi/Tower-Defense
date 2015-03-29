@@ -108,7 +108,7 @@ class SlowProjectile(Projectile):
                 
 
     def effect(self):
-        self.ePursuit.speed = 0.8
+        self.ePursuit.maxVelocity = 0.8
 
     def visualEffect(self):
         if(self.nextParticle < 0):
@@ -167,9 +167,9 @@ dicTowers["Slow"] = {"ChooseMethod" : chooseTargetWithoutSpeedModification,
 dicTowers["Poison"] = {"ChooseMethod" : chooseTargetWithoutPoison,
                      "Cost" : 10,
                      "Slow" : 0.0, "PoisonDamage": 1, "HitDamage": 0.0,
-                     "HP": 15, "Effect": poison, "Cooldown": 2.0, "Range":100}
+                     "HP": 15, "Effect": poison, "Cooldown": 5.0, "Range":100}
 
 dicTowers["Farm"] = {"ChooseMethod" : sendMoneyToCity,
                      "Cost" : 20,
                      "Slow" : 0.0, "PoisonDamage": 0, "HitDamage": 0.0,
-                     "HP": 1, "Effect": money, "Cooldown": 5.0, "Range":100}
+                     "HP": 1, "Effect": money, "Cooldown": 15.0, "Range":100}

@@ -39,7 +39,8 @@ class EntityManager:
                     self.layers[layer] = [tag]
 
     def removeEntity(self, entity, tag):
-        self.entitys[tag].remove(entity)        
+        if(self.entitys[tag].count(entity) > 0):
+            self.entitys[tag].remove(entity)        
 
     def update(self, lTags = None):
         lEntitys = []

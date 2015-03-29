@@ -1,16 +1,16 @@
 from MonstersAnimations import *
 lMonstersStats = []
 
-statsBoneDullahan = {"HP": 10, "Speed": 1, "AnimationTag": "BoneDullahan", "EntityTag": "Dullahan", "Animation": lImagesBoneDullahan, "SoundList": ["Ogre1", "Ogre2", "Ogre3", "Ogre4", "Ogre5"]}
+statsBoneDullahan = {"HP": 15, "Speed": 1, "AnimationTag": "BoneDullahan", "EntityTag": "Dullahan", "Animation": lImagesBoneDullahan, "SoundList": ["Ogre1", "Ogre2", "Ogre3", "Ogre4", "Ogre5"]}
 lMonstersStats.append(statsBoneDullahan)
-statsDullahan = {"HP": 10, "Speed": 1, "AnimationTag": "Dullahan", "EntityTag": "Dullahan", "Animation": lImagesDullahan, "SoundList": []}
+statsDullahan = {"HP": 10, "Speed": 1.2, "AnimationTag": "Dullahan", "EntityTag": "Dullahan", "Animation": lImagesDullahan, "SoundList": []}
 lMonstersStats.append(statsDullahan)
 
 Rat1 = {"HP": 5, "Speed": 2, "AnimationTag": "Rat1", "EntityTag": "Rat", "Animation": lImagesRat1, "SoundList": ["Rat1","Rat2","Rat3","Rat4"]}
 lMonstersStats.append(Rat1)
-Rat2 = {"HP": 15, "Speed": 2, "AnimationTag": "Rat2", "EntityTag": "Rat", "Animation": lImagesRat2, "SoundList": ["Rat1","Rat2","Rat3","Rat4"]}
+Rat2 = {"HP": 15, "Speed": 2.5, "AnimationTag": "Rat2", "EntityTag": "Rat", "Animation": lImagesRat2, "SoundList": ["Rat1","Rat2","Rat3","Rat4"]}
 lMonstersStats.append(Rat2)
-statsFlameRat = {"HP": 15, "Speed": 2.5, "AnimationTag": "FlameRat", "EntityTag": "Rat", "Animation": lImagesFlameRat, "SoundList": ["Rat1","Rat2","Rat3","Rat4"]}
+statsFlameRat = {"HP": 20, "Speed":4, "AnimationTag": "FlameRat", "EntityTag": "Rat", "Animation": lImagesFlameRat, "SoundList": ["Rat1","Rat2","Rat3","Rat4"]}
 lMonstersStats.append(statsFlameRat)
 
 HeartBreaker1 = {"HP": 15, "Speed": 1, "AnimationTag": "HeartBreaker1", "EntityTag": "HeartBreaker", "Animation": lImagesHeartBreaker1, "SoundList": ["HeartBreaker1", "HeartBreaker2"]}

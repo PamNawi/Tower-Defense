@@ -90,9 +90,15 @@ lImagesSlowParticle = ([".//resources//Projectiles//slowParticle.png",
 lImagesPoisonParticle = ([".//resources//Projectiles//poisonParticle.png"],1)
 lImagesFarmParticle = ([".//resources//Projectiles//farmParticle.png"],1)
 
+lImagesFireBall = ([".//Resources//Skills//meteorSprite.png"],1)
+
 
 #Skills Particles
 lImagesHealParticle =([".//Resources//Skills//HealParticle.png"],1)
+lImagesMeteorParticle =([".//Resources//Skills//meteorParticle.png",
+                         ".//Resources//Skills//meteorParticle2.png",
+                         ".//Resources//Skills//meteorParticle3.png",
+                         ".//Resources//Skills//meteorParticle4.png",],0.3)
 
 #Extra Particles
 lImagesSmokeParticle = ([".//Resources//smokeParticle.png",

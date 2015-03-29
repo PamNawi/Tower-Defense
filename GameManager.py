@@ -11,6 +11,7 @@ from TowerDefenseGraph import *
 from TowerFunctions import *
 from SkillsFunctions import *
 from Descriptions import *
+from General import *
 
 class GameManager:
     def __init__(self):
@@ -27,7 +28,7 @@ class GameManager:
         pass
 
     def load(self):
-        mE.setGlobalVariable("Money",100)
+        mE.setGlobalVariable("Money",10)
         mE.mGlobalVariables["EndGame"] = False
         
         self.loadAnimations()
@@ -47,22 +48,28 @@ class GameManager:
         mE.mParticleManager.addUpdateFunction(lImagesHealParticle[0], lImagesHealParticle[1], spin , "healParticle")
         
         mE.mParticleManager.addUpdateFunction(lImagesSmokeParticle[0], lImagesSmokeParticle[1], spin , "Smoke")
+
+        mE.mParticleManager.addUpdateFunction(lImagesMeteorParticle[0], lImagesMeteorParticle[1], cascate , "MeteorCascate")
         
     def loadSounds(self):
         mE.mJukebox.LoadSong(levelSong, "LevelSong")
         mE.mJukebox.LoadSong(bossFight, "BossFight")
         
         mE.mJukebox.LoadSound(newTowerSound, "NewTower")
+        mE.mJukebox.LoadSound(destructedTower, "TowerDown")
+        
         mE.mJukebox.LoadSound(error, "Error")
         mE.mJukebox.LoadSound(damage, "Damage")
         mE.mJukebox.LoadSound(magic, "Magic")
         mE.mJukebox.LoadSound(teleport, "Teleport")
-        mE.mJukebox.LoadSound(coming, "MonstersComing")
         mE.mJukebox.LoadSound(heart, "Heart")
         mE.mJukebox.LoadSound(heal, "Heal")
         mE.mJukebox.LoadSound(timeRunning, "TimeRunning")
         mE.mJukebox.LoadSound(alarmClock, "AlarmClock")
+        mE.mJukebox.LoadSound(explosionSound, "Explosion")
 
+        mE.mGlobalVariables["General"] = GeneralVoices()
+        
         for monsterSound in lMonstersSounds:
             mE.mJukebox.LoadSound(monsterSound[0], monsterSound[1])
         
@@ -138,7 +145,10 @@ class GameManager:
         mE.mAnimationManager.addAnimation(lImagesSimpleProjectil[0],lImagesSimpleProjectil[1], "SimpleProjectil")
         mE.mAnimationManager.addAnimation(lImagesSlowProjectil[0],lImagesSlowProjectil[1], "SlowProjectil")   
         mE.mAnimationManager.addAnimation(lImagesPoisonProjectil[0],lImagesPoisonProjectil[1], "PoisonProjectil")     
-        mE.mAnimationManager.addAnimation(lImagesFarmProjectil[0],lImagesFarmProjectil[1], "FarmProjectil")                          
+        mE.mAnimationManager.addAnimation(lImagesFarmProjectil[0],lImagesFarmProjectil[1], "FarmProjectil")
+
+        mE.mAnimationManager.addAnimation(lImagesFireBall[0],lImagesFireBall[1], "FireBall")
+
 
             #HealthBar City
         mE.mEntityManager.defineLayerOrder(["Tombstone","Towers", "Monsters", "BackUI", "UI"])
@@ -150,6 +160,7 @@ class GameManager:
         portalCoord = self.portalTiles[0][1][0]
         portalCoord = mapPortal.toMapCoordinate(portalCoord.position)
         portalCoord = (0,portalCoord[0] * tileWidth,portalCoord[1] * tileHeigth)
+        
         
         #Create a global variable PortalCoord who have the position of the portal
         mE.setGlobalVariable("PortalCoord",    portalCoord)
@@ -209,17 +220,17 @@ class GameManager:
         self.skillIcons = {}
 
         #Create the TimeStopIcon
-        timeStopButton = self.mHUD.addCooldownButton(self.selectSkill, "TimeStop",Vec2d(79-50+ 424+180,712),"TimeStopIcon", Vec2d(34,34), cooldown = 60.0)
+        timeStopButton = self.mHUD.addCooldownButton(self.selectSkill, "TimeStop",Vec2d(79-50+ 424+180,712),"TimeStopIcon", Vec2d(34,34), cooldown = 180.0)
         timeStopButton.cooldownBar.setPosition(Vec2d(86-50+ 424+180,751))
         self.skillIcons["TimeStop"] = timeStopButton
 
         #Create the HealIcon
-        healButton = self.mHUD.addCooldownButton(self.selectSkill, "Heal",Vec2d(123-50+ 424+180,712),"HealIcon", Vec2d(34,34), cooldown = 30.0)
+        healButton = self.mHUD.addCooldownButton(self.selectSkill, "Heal",Vec2d(123-50+ 424+180,712),"HealIcon", Vec2d(34,34), cooldown = 90.0)
         healButton.cooldownBar.setPosition(Vec2d(130-50+ 424+180,751))
         self.skillIcons["Heal"] = healButton
 
         #Create the FireBallIcon
-        fireBallButton = self.mHUD.addCooldownButton(self.selectSkill, "FireBall",Vec2d(167-50+ 424+180,712),"FireBallIcon", Vec2d(34,34), cooldown = 30.0)
+        fireBallButton = self.mHUD.addCooldownButton(self.selectSkill, "FireBall",Vec2d(167-50+ 424+180,712),"FireBallIcon", Vec2d(34,34), cooldown = 300.0)
         fireBallButton.cooldownBar.setPosition(Vec2d(174-50+ 424+180,751))
         self.skillIcons["FireBall"] = fireBallButton
         
@@ -282,13 +293,14 @@ class GameManager:
     def gameLoop(self):
         self.end = False
 
-        mE.mJukebox.PlaySong("LevelSong")
+        mE.mJukebox.PlaySong("LevelSong",True)
         #mE.mJukebox.PlaySong("BossFight")
         while not self.end:
             mE.update()
             
             if(mE.keyboard.isPressed(pygame.K_ESCAPE)):
                 self.selectedTower = ""
+                self.selectedSkill = ""
                 mouse = self.mHUD.mouseEntity
                 mE.mAnimationManager.setEntityAnimation(mouse,"Mouse")
                 #self.end = True
@@ -314,7 +326,11 @@ class GameManager:
             if(self.isOver()):
                 break
                 print "Game Over"
-                
+
+            if(mE.keyboard.isPressed(pygame.K_UP)):
+                self.playerWins = False
+                break
+
             self.showInfo()
             self.addTimeCash()
 
@@ -398,7 +414,7 @@ class GameManager:
 
             #Put on Graph
             graph = mE.mGlobalVariables["Graph"]
-            graph.addWeightNode(t.graphPosition,50)
+            graph.changeWeight(t.graphPosition,100)
             self.recalculateRouteAllMonsters()
 
             #Start iconCooldown
@@ -495,6 +511,7 @@ class GameManager:
         graph = TowerDefenseGraph()
         graph.walkable = walkable
         graph.loadGraphFromMaps(mapFile, tileWidth, tileHeigth)
+        #graph.loadWeigths()
         mE.mGlobalVariables["Graph"] = graph
         
         self.setPortalCoordinates()

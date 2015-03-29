@@ -57,7 +57,7 @@ class StageSelection:
         f.close()
             
     def update(self):
-        mE.mJukebox.PlaySong("WorldMap")
+        mE.mJukebox.PlaySong("WorldMap",True)
         self.end = False
         while not self.end:
             mE.update()
